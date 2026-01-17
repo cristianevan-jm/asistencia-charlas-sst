@@ -59,12 +59,61 @@
       <label for="charla">Charla leída</label>
       <select id="charla" required>
         <option value="" disabled selected>Seleccione…</option>
-        <!-- ✅ Aquí pegas tus 54 charlas -->
-        <option>Charla 01</option>
-        <option>Charla 02</option>
-        <option>Charla 03</option>
-        <!-- ... hasta Charla 54 -->
-        <option>Charla 54</option>
+        <!-- ✅ Aquí puedes reemplazar por tus 54 charlas con título -->
+        <option value="Charla 01">Charla 01</option>
+        <option value="Charla 02">Charla 02</option>
+        <option value="Charla 03">Charla 03</option>
+        <option value="Charla 04">Charla 04</option>
+        <option value="Charla 05">Charla 05</option>
+        <option value="Charla 06">Charla 06</option>
+        <option value="Charla 07">Charla 07</option>
+        <option value="Charla 08">Charla 08</option>
+        <option value="Charla 09">Charla 09</option>
+        <option value="Charla 10">Charla 10</option>
+        <option value="Charla 11">Charla 11</option>
+        <option value="Charla 12">Charla 12</option>
+        <option value="Charla 13">Charla 13</option>
+        <option value="Charla 14">Charla 14</option>
+        <option value="Charla 15">Charla 15</option>
+        <option value="Charla 16">Charla 16</option>
+        <option value="Charla 17">Charla 17</option>
+        <option value="Charla 18">Charla 18</option>
+        <option value="Charla 19">Charla 19</option>
+        <option value="Charla 20">Charla 20</option>
+        <option value="Charla 21">Charla 21</option>
+        <option value="Charla 22">Charla 22</option>
+        <option value="Charla 23">Charla 23</option>
+        <option value="Charla 24">Charla 24</option>
+        <option value="Charla 25">Charla 25</option>
+        <option value="Charla 26">Charla 26</option>
+        <option value="Charla 27">Charla 27</option>
+        <option value="Charla 28">Charla 28</option>
+        <option value="Charla 29">Charla 29</option>
+        <option value="Charla 30">Charla 30</option>
+        <option value="Charla 31">Charla 31</option>
+        <option value="Charla 32">Charla 32</option>
+        <option value="Charla 33">Charla 33</option>
+        <option value="Charla 34">Charla 34</option>
+        <option value="Charla 35">Charla 35</option>
+        <option value="Charla 36">Charla 36</option>
+        <option value="Charla 37">Charla 37</option>
+        <option value="Charla 38">Charla 38</option>
+        <option value="Charla 39">Charla 39</option>
+        <option value="Charla 40">Charla 40</option>
+        <option value="Charla 41">Charla 41</option>
+        <option value="Charla 42">Charla 42</option>
+        <option value="Charla 43">Charla 43</option>
+        <option value="Charla 44">Charla 44</option>
+        <option value="Charla 45">Charla 45</option>
+        <option value="Charla 46">Charla 46</option>
+        <option value="Charla 47">Charla 47</option>
+        <option value="Charla 48">Charla 48</option>
+        <option value="Charla 49">Charla 49</option>
+        <option value="Charla 50">Charla 50</option>
+        <option value="Charla 51">Charla 51</option>
+        <option value="Charla 52">Charla 52</option>
+        <option value="Charla 53">Charla 53</option>
+        <option value="Charla 54">Charla 54</option>
       </select>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
@@ -75,7 +124,7 @@
   </div>
 
   <script>
-    // 🔁 Pega aquí la URL del Web App de Apps Script (la del despliegue)
+    // ✅ Pega la URL del Web App de Apps Script (termina en /exec)
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbxEqk8EJy0dw_ydpTdh_ccxB3jNmxZ4W1pZKbRNqkkbkE89WSQvk6Ii9q_YtdqAWHbbKQ/exec";
 
     const frm = document.getElementById("frm");
@@ -86,7 +135,8 @@
       msg.textContent = "Enviando…";
       msg.className = "";
 
-      const payload = {
+      // ✅ Enviar como formulario (evita preflight CORS)
+      const payload = new URLSearchParams({
         nombre: document.getElementById("nombre").value.trim(),
         apellido: document.getElementById("apellido").value.trim(),
         ciudad: document.getElementById("ciudad").value.trim(),
@@ -94,17 +144,16 @@
         empresa: document.getElementById("empresa").value.trim(),
         contrato: document.getElementById("contrato").value.trim(),
         charla: document.getElementById("charla").value
-      };
+      });
 
       try {
         const res = await fetch(ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: payload
         });
 
         const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error(data.error || "Error al guardar");
+        if (!data.ok) throw new Error(data.error || "Error al guardar");
 
         msg.textContent = "✅ Registro guardado";
         msg.className = "ok";
@@ -117,6 +166,3 @@
   </script>
 </body>
 </html>
-
-
-
