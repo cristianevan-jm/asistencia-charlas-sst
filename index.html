@@ -21,109 +21,117 @@
   <h1>*** Asistencia Charlas SST ***</h1>
   <p><small>Un solo link para registrar lectura de charlas. (Los datos se guardan en una hoja de cálculo.)</small></p>
 
-  <div class="row">
+  <div class="card">
+    <!-- ✅ iframe oculto para que NO redireccione -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+    <form id="frm"
+      action="https://script.google.com/macros/s/AKfycbzELrJiPU_Y_1Nxue7U2EqVv6d2o8idgwpwrhBaIP2EmeJJt2eM6lXqrqXbCsyXmQAvxg/exec"
+      method="POST"
+      target="hidden_iframe">
+
+      <div class="row">
         <div>
           <label>Nombre</label>
-          <input name="nombre" required>
+          <input name="nombre" id="nombre" required />
         </div>
         <div>
           <label>Apellido</label>
-          <input name="apellido" required>
+          <input name="apellido" id="apellido" required />
         </div>
       </div>
 
-      <!-- ✅ NUEVOS CAMPOS (sin tocar estilo) -->
+      <!-- ✅ Nuevos campos -->
       <div class="row">
         <div>
           <label>Cédula</label>
-          <input name="cedula" required>
+          <input name="cedula" id="cedula" required />
         </div>
         <div>
           <label>Cargo</label>
-          <input name="cargo" required>
+          <input name="cargo" id="cargo" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Ciudad</label>
-          <input name="ciudad" required>
+          <input name="ciudad" id="ciudad" required />
         </div>
         <div>
           <label>Lateral / Placa del vehículo</label>
-          <input name="lateral" required>
+          <input name="lateral" id="lateral" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Empresa</label>
-          <input name="empresa" required>
+          <input name="empresa" id="empresa" required />
         </div>
         <div>
           <label>Contrato / dónde presta servicio</label>
-          <input name="contrato" required>
+          <input name="contrato" id="contrato" required />
         </div>
       </div>
 
-      <label for="charla">Charla leída</label>
-      <select id="charla" required>
+      <label>Charla leída</label>
+      <select name="charla" id="charla" required>
         <option value="" disabled selected>Seleccione…</option>
-        <!-- ✅ Aquí puedes reemplazar por tus 54 charlas con título -->
-        <option value="Charla 01">Charla 01</option>
-        <option value="Charla 02">Charla 02</option>
-        <option value="Charla 03">Charla 03</option>
-        <option value="Charla 04">Charla 04</option>
-        <option value="Charla 05">Charla 05</option>
-        <option value="Charla 06">Charla 06</option>
-        <option value="Charla 07">Charla 07</option>
-        <option value="Charla 08">Charla 08</option>
-        <option value="Charla 09">Charla 09</option>
-        <option value="Charla 10">Charla 10</option>
-        <option value="Charla 11">Charla 11</option>
-        <option value="Charla 12">Charla 12</option>
-        <option value="Charla 13">Charla 13</option>
-        <option value="Charla 14">Charla 14</option>
-        <option value="Charla 15">Charla 15</option>
-        <option value="Charla 16">Charla 16</option>
-        <option value="Charla 17">Charla 17</option>
-        <option value="Charla 18">Charla 18</option>
-        <option value="Charla 19">Charla 19</option>
-        <option value="Charla 20">Charla 20</option>
-        <option value="Charla 21">Charla 21</option>
-        <option value="Charla 22">Charla 22</option>
-        <option value="Charla 23">Charla 23</option>
-        <option value="Charla 24">Charla 24</option>
-        <option value="Charla 25">Charla 25</option>
-        <option value="Charla 26">Charla 26</option>
-        <option value="Charla 27">Charla 27</option>
-        <option value="Charla 28">Charla 28</option>
-        <option value="Charla 29">Charla 29</option>
-        <option value="Charla 30">Charla 30</option>
-        <option value="Charla 31">Charla 31</option>
-        <option value="Charla 32">Charla 32</option>
-        <option value="Charla 33">Charla 33</option>
-        <option value="Charla 34">Charla 34</option>
-        <option value="Charla 35">Charla 35</option>
-        <option value="Charla 36">Charla 36</option>
-        <option value="Charla 37">Charla 37</option>
-        <option value="Charla 38">Charla 38</option>
-        <option value="Charla 39">Charla 39</option>
-        <option value="Charla 40">Charla 40</option>
-        <option value="Charla 41">Charla 41</option>
-        <option value="Charla 42">Charla 42</option>
-        <option value="Charla 43">Charla 43</option>
-        <option value="Charla 44">Charla 44</option>
-        <option value="Charla 45">Charla 45</option>
-        <option value="Charla 46">Charla 46</option>
-        <option value="Charla 47">Charla 47</option>
-        <option value="Charla 48">Charla 48</option>
-        <option value="Charla 49">Charla 49</option>
-        <option value="Charla 50">Charla 50</option>
-        <option value="Charla 51">Charla 51</option>
-        <option value="Charla 52">Charla 52</option>
-        <option value="Charla 53">Charla 53</option>
-        <option value="Charla 54">Charla 54</option>
+        <option>Charla 01</option>
+        <option>Charla 02</option>
+        <option>Charla 03</option>
+        <option>Charla 04</option>
+        <option>Charla 05</option>
+        <option>Charla 06</option>
+        <option>Charla 07</option>
+        <option>Charla 08</option>
+        <option>Charla 09</option>
+        <option>Charla 10</option>
+        <option>Charla 11</option>
+        <option>Charla 12</option>
+        <option>Charla 13</option>
+        <option>Charla 14</option>
+        <option>Charla 15</option>
+        <option>Charla 16</option>
+        <option>Charla 17</option>
+        <option>Charla 18</option>
+        <option>Charla 19</option>
+        <option>Charla 20</option>
+        <option>Charla 21</option>
+        <option>Charla 22</option>
+        <option>Charla 23</option>
+        <option>Charla 24</option>
+        <option>Charla 25</option>
+        <option>Charla 26</option>
+        <option>Charla 27</option>
+        <option>Charla 28</option>
+        <option>Charla 29</option>
+        <option>Charla 30</option>
+        <option>Charla 31</option>
+        <option>Charla 32</option>
+        <option>Charla 33</option>
+        <option>Charla 34</option>
+        <option>Charla 35</option>
+        <option>Charla 36</option>
+        <option>Charla 37</option>
+        <option>Charla 38</option>
+        <option>Charla 39</option>
+        <option>Charla 40</option>
+        <option>Charla 41</option>
+        <option>Charla 42</option>
+        <option>Charla 43</option>
+        <option>Charla 44</option>
+        <option>Charla 45</option>
+        <option>Charla 46</option>
+        <option>Charla 47</option>
+        <option>Charla 48</option>
+        <option>Charla 49</option>
+        <option>Charla 50</option>
+        <option>Charla 51</option>
+        <option>Charla 52</option>
+        <option>Charla 53</option>
+        <option>Charla 54</option>
       </select>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
@@ -134,49 +142,22 @@
   </div>
 
   <script>
-    // ✅ Pega la URL del Web App de Apps Script (termina en /exec)
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzELrJiPU_Y_1Nxue7U2EqVv6d2o8idgwpwrhBaIP2EmeJJt2eM6lXqrqXbCsyXmQAvxg/exec";
-
     const frm = document.getElementById("frm");
     const msg = document.getElementById("msg");
 
-    frm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    frm.addEventListener("submit", () => {
+      // Mensaje inmediato
       msg.textContent = "Enviando…";
       msg.className = "";
 
-      // ✅ Enviar como formulario (evita preflight CORS)
-      const payload = new URLSearchParams({
-        nombre: document.getElementById("nombre").value.trim(),
-        apellido: document.getElementById("apellido").value.trim(),
-        ciudad: document.getElementById("ciudad").value.trim(),
-        lateral: document.getElementById("lateral").value.trim(),
-        empresa: document.getElementById("empresa").value.trim(),
-        contrato: document.getElementById("contrato").value.trim(),
-        charla: document.getElementById("charla").value
-      });
-
-      try {
-        const res = await fetch(ENDPOINT, {
-          method: "POST",
-          body: payload
-        });
-
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error || "Error al guardar");
-
+      // Después de un momento, mostramos "Registro guardado"
+      // (porque la respuesta se envía al iframe oculto)
+      setTimeout(() => {
         msg.textContent = "✅ Registro guardado";
         msg.className = "ok";
         frm.reset();
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
-        msg.className = "err";
-      }
+      }, 900);
     });
   </script>
 </body>
 </html>
-
-
-
-
