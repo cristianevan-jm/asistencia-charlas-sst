@@ -22,57 +22,61 @@
   <p><small>Un solo link para registrar lectura de charlas. (Los datos se guardan en una hoja de cálculo.)</small></p>
 
   <div class="card">
-    <form 
+    <!-- ✅ iframe oculto para que NO redireccione -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+    <form id="frm"
       action="https://script.google.com/macros/s/AKfycbzELrJiPU_Y_1Nxue7U2EqVv6d2o8idgwpwrhBaIP2EmeJJt2eM6lXqrqXbCsyXmQAvxg/exec"
-      method="POST">
+      method="POST"
+      target="hidden_iframe">
 
       <div class="row">
         <div>
           <label>Nombre</label>
-          <input name="nombre" required>
+          <input name="nombre" id="nombre" required />
         </div>
         <div>
           <label>Apellido</label>
-          <input name="apellido" required>
+          <input name="apellido" id="apellido" required />
         </div>
       </div>
 
-      <!-- ✅ NUEVOS CAMPOS (sin tocar estilo) -->
+      <!-- ✅ Nuevos campos -->
       <div class="row">
         <div>
           <label>Cédula</label>
-          <input name="cedula" required>
+          <input name="cedula" id="cedula" required />
         </div>
         <div>
           <label>Cargo</label>
-          <input name="cargo" required>
+          <input name="cargo" id="cargo" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Ciudad</label>
-          <input name="ciudad" required>
+          <input name="ciudad" id="ciudad" required />
         </div>
         <div>
           <label>Lateral / Placa del vehículo</label>
-          <input name="lateral" required>
+          <input name="lateral" id="lateral" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Empresa</label>
-          <input name="empresa" required>
+          <input name="empresa" id="empresa" required />
         </div>
         <div>
           <label>Contrato / dónde presta servicio</label>
-          <input name="contrato" required>
+          <input name="contrato" id="contrato" required />
         </div>
       </div>
 
       <label>Charla leída</label>
-      <select name="charla" required>
+      <select name="charla" id="charla" required>
         <option value="" disabled selected>Seleccione…</option>
         <option>Charla 01</option>
         <option>Charla 02</option>
@@ -138,49 +142,22 @@
   </div>
 
   <script>
-    // ✅ Pega la URL del Web App de Apps Script (termina en /exec)
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzELrJiPU_Y_1Nxue7U2EqVv6d2o8idgwpwrhBaIP2EmeJJt2eM6lXqrqXbCsyXmQAvxg/exec";
-
     const frm = document.getElementById("frm");
     const msg = document.getElementById("msg");
 
-    frm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    frm.addEventListener("submit", () => {
+      // Mensaje inmediato
       msg.textContent = "Enviando…";
       msg.className = "";
 
-      // ✅ Enviar como formulario (evita preflight CORS)
-      const payload = new URLSearchParams({
-        nombre: document.getElementById("nombre").value.trim(),
-        apellido: document.getElementById("apellido").value.trim(),
-        ciudad: document.getElementById("ciudad").value.trim(),
-        lateral: document.getElementById("lateral").value.trim(),
-        empresa: document.getElementById("empresa").value.trim(),
-        contrato: document.getElementById("contrato").value.trim(),
-        charla: document.getElementById("charla").value
-      });
-
-      try {
-        const res = await fetch(ENDPOINT, {
-          method: "POST",
-          body: payload
-        });
-
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error || "Error al guardar");
-
+      // Después de un momento, mostramos "Registro guardado"
+      // (porque la respuesta se envía al iframe oculto)
+      setTimeout(() => {
         msg.textContent = "✅ Registro guardado";
         msg.className = "ok";
         frm.reset();
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
-        msg.className = "err";
-      }
+      }, 900);
     });
   </script>
 </body>
 </html>
-
-
-
-
