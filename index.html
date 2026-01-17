@@ -4,8 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Asistencia Charlas SST</title>
-
-  <!-- 🔒 ESTILO ORIGINAL (NO MODIFICADO) -->
   <style>
     body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
     h1{margin:0 0 10px}
@@ -14,10 +12,11 @@
     input,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
     button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ok{color:#0a7a0a;font-weight:700}
+    .err{color:#b00020;font-weight:700}
     small{color:#666}
   </style>
 </head>
-
 <body>
   <h1>*** Asistencia Charlas SST ***</h1>
   <p><small>Un solo link para registrar lectura de charlas. (Los datos se guardan en una hoja de cálculo.)</small></p>
@@ -131,10 +130,55 @@
         <option>Charla 54</option>
       </select>
 
-      <div style="margin-top:14px">
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
         <button type="submit">Enviar asistencia</button>
+        <span id="msg"></span>
       </div>
     </form>
   </div>
+
+  <script>
+    // ✅ Pega la URL del Web App de Apps Script (termina en /exec)
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycby98PRfYU_w3YEEL4LrChGaPaEsSjBFI9vidTldqbX1Tgiz5G0XjSJuNF-x-a_AhbyeiA/exec";
+
+    const frm = document.getElementById("frm");
+    const msg = document.getElementById("msg");
+
+    frm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.textContent = "Enviando…";
+      msg.className = "";
+
+      // ✅ Enviar como formulario (evita preflight CORS)
+      const payload = new URLSearchParams({
+        nombre: document.getElementById("nombre").value.trim(),
+        apellido: document.getElementById("apellido").value.trim(),
+        ciudad: document.getElementById("ciudad").value.trim(),
+        lateral: document.getElementById("lateral").value.trim(),
+        empresa: document.getElementById("empresa").value.trim(),
+        contrato: document.getElementById("contrato").value.trim(),
+        charla: document.getElementById("charla").value
+      });
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: "POST",
+          body: payload
+        });
+
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Error al guardar");
+
+        msg.textContent = "✅ Registro guardado";
+        msg.className = "ok";
+        frm.reset();
+      } catch (err) {
+        msg.textContent = "❌ " + err.message;
+        msg.className = "err";
+      }
+    });
+  </script>
 </body>
 </html>
+
+
