@@ -22,7 +22,7 @@
   <p><small>Un solo link para registrar lectura de charlas. (Los datos se guardan en una hoja de cálculo.)</small></p>
 
   <div class="card">
-    <!-- ✅ iframe oculto para que NO redireccione -->
+    <!-- iframe oculto para NO redirigir -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
     <form id="frm"
@@ -33,122 +33,113 @@
       <div class="row">
         <div>
           <label>Nombre</label>
-          <input name="nombre" id="nombre" required />
+          <input name="nombre" required />
         </div>
         <div>
           <label>Apellido</label>
-          <input name="apellido" id="apellido" required />
+          <input name="apellido" required />
         </div>
       </div>
 
-      <!-- ✅ Nuevos campos -->
       <div class="row">
         <div>
           <label>Cédula</label>
-          <input name="cedula" id="cedula" required />
+          <input name="cedula" required />
         </div>
         <div>
           <label>Cargo</label>
-          <input name="cargo" id="cargo" required />
+          <input name="cargo" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Ciudad</label>
-          <input name="ciudad" id="ciudad" required />
+          <input name="ciudad" required />
         </div>
         <div>
           <label>Lateral / Placa del vehículo</label>
-          <input name="lateral" id="lateral" required />
+          <input name="lateral" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Empresa</label>
-          <input name="empresa" id="empresa" required />
+          <input name="empresa" required />
         </div>
         <div>
           <label>Contrato / dónde presta servicio</label>
-          <input name="contrato" id="contrato" required />
+          <input name="contrato" required />
         </div>
       </div>
 
       <label>Charla leída</label>
-      <select name="charla" id="charla" required>
+      <!-- ✅ IMPORTANTÍSIMO: value numérico -->
+      <select name="charla_num" required>
         <option value="" disabled selected>Seleccione…</option>
-          <option value="Charla 01">Charla 01 – La seguridad comienza conmigo</option>
-  <option value="Charla 02">Charla 02 – Identificación de peligros en la operación de transporte</option>
 
-  <option value="Charla 03">Charla 03 – Uso correcto de los EPP</option>
-  <option value="Charla 04">Charla 04 – Fatiga y somnolencia en la conducción</option>
-  <option value="Charla 05">Charla 05 – Alcohol, drogas y medicamentos: riesgos al conducir</option>
-  <option value="Charla 06">Charla 06 – Ergonomía en el puesto de conducción</option>
-
-  <option value="Charla 07">Charla 07 – Importancia de las pausas activas</option>
-  <option value="Charla 08">Charla 08 – Estrés laboral en conductores</option>
-  <option value="Charla 09">Charla 09 – Reporte de actos y condiciones inseguras</option>
-  <option value="Charla 10">Charla 10 – Incidentes vs accidentes de trabajo</option>
-
-  <option value="Charla 11">Charla 11 – Primeros auxilios básicos en carretera</option>
-  <option value="Charla 12">Charla 12 – Atención y manejo de emergencias viales</option>
-  <option value="Charla 13">Charla 13 – Inducción y reinducción en SG-SST</option>
-  <option value="Charla 14">Charla 14 – Salud mental y bienestar del conductor</option>
-
-  <option value="Charla 15">Charla 15 – Cultura del autocuidado en el transporte</option>
-  <option value="Charla 16">Charla 16 – ¿Qué es el PESV y por qué es obligatorio?</option>
-  <option value="Charla 17">Charla 17 – El conductor como actor vial responsable</option>
-  <option value="Charla 18">Charla 18 – Exceso de velocidad y consecuencias viales</option>
-
-  <option value="Charla 19">Charla 19 – Uso obligatorio del cinturón de seguridad</option>
-  <option value="Charla 20">Charla 20 – Distracciones al volante</option>
-  <option value="Charla 21">Charla 21 – Inspección preoperacional del vehículo</option>
-  <option value="Charla 22">Charla 22 – Documentación obligatoria del conductor y del vehículo</option>
-
-  <option value="Charla 23">Charla 23 – Importancia del mantenimiento vehicular</option>
-  <option value="Charla 24">Charla 24 – Conducción segura en clima adverso</option>
-  <option value="Charla 25">Charla 25 – Principios del manejo defensivo</option>
-  <option value="Charla 26">Charla 26 – Conducción segura en zonas rurales y urbanas</option>
-
-  <option value="Charla 27">Charla 27 – Seguridad en el transporte de pasajeros</option>
-  <option value="Charla 28">Charla 28 – Seguridad en el transporte de carga</option>
-  <option value="Charla 29">Charla 29 – Protección de actores viales vulnerables</option>
-  <option value="Charla 30">Charla 30 – Reporte e investigación de siniestros viales</option>
-
-  <option value="Charla 31">Charla 31 – ¿Qué es la calidad en transporte?</option>
-  <option value="Charla 32">Charla 32 – Cliente interno y cliente externo</option>
-  <option value="Charla 33">Charla 33 – Cumplimiento de procedimientos operativos</option>
-  <option value="Charla 34">Charla 34 – Atención y servicio al usuario</option>
-
-  <option value="Charla 35">Charla 35 – Entregas oportunas y seguras</option>
-  <option value="Charla 36">Charla 36 – Importancia de los registros y formatos</option>
-  <option value="Charla 37">Charla 37 – Mejora continua en la operación</option>
-  <option value="Charla 38">Charla 38 – No conformidades y acciones correctivas</option>
-
-  <option value="Charla 39">Charla 39 – Indicadores de gestión en transporte</option>
-  <option value="Charla 40">Charla 40 – Trabajo en equipo y comunicación efectiva</option>
-  <option value="Charla 41">Charla 41 – Sistema Integrado de Gestión</option>
-  <option value="Charla 42">Charla 42 – Cumplimiento legal en transporte</option>
-
-  <option value="Charla 43">Charla 43 – Roles y responsabilidades en el SIG</option>
-  <option value="Charla 44">Charla 44 – Gestión integral de riesgos</option>
-  <option value="Charla 45">Charla 45 – Cultura organizacional en seguridad y calidad</option>
-  <option value="Charla 46">Charla 46 – Comunicación interna del SIG</option>
-  <option value="Charla 47">Charla 47 – Auditorías internas</option>
-  <option value="Charla 48">Charla 48 – Lecciones aprendidas</option>
-
-  <option value="Charla 49">Charla 49 – Documentación del SIG</option>
-  <option value="Charla 50">Charla 50 – Compromiso de la alta dirección</option>
-  <option value="Charla 51">Charla 51 – Ética y comportamiento del conductor</option>
-  <option value="Charla 52">Charla 52 – Respeto por la vida en la vía</option>
-  <option value="Charla 53">Charla 53 – Toma de decisiones seguras</option>
-  <option value="Charla 54">Charla 54 – Comunicación asertiva</option>
-  <option value="Charla 55">Charla 55 – Liderazgo en seguridad vial</option>
-  <option value="Charla 56">Charla 56 – Responsabilidad social</option>
-  <option value="Charla 57">Charla 57 – Autocontrol emocional al conducir</option>
-  <option value="Charla 58">Charla 58 – La seguridad y la calidad salvan vidas</option>
-</select>
+        <option value="1">Charla 01 – La seguridad comienza conmigo</option>
+        <option value="2">Charla 02 – Identificación de peligros en la operación de transporte</option>
+        <option value="3">Charla 03 – Uso correcto de los elementos de protección personal (EPP)</option>
+        <option value="4">Charla 04 – Fatiga y somnolencia en la conducción</option>
+        <option value="5">Charla 05 – Alcohol, drogas y medicamentos: riesgos al conducir</option>
+        <option value="6">Charla 06 – Ergonomía en el puesto de conducción</option>
+        <option value="7">Charla 07 – Importancia de las pausas activas</option>
+        <option value="8">Charla 08 – Estrés laboral en conductores</option>
+        <option value="9">Charla 09 – Reporte de actos y condiciones inseguras</option>
+        <option value="10">Charla 10 – Incidentes vs accidentes de trabajo</option>
+        <option value="11">Charla 11 – Primeros auxilios básicos en carretera</option>
+        <option value="12">Charla 12 – Atención y manejo de emergencias viales</option>
+        <option value="13">Charla 13 – Inducción y reinducción en SG-SST</option>
+        <option value="14">Charla 14 – Salud mental y bienestar del conductor</option>
+        <option value="15">Charla 15 – Cultura del autocuidado en el transporte</option>
+        <option value="16">Charla 16 – ¿Qué es el PESV y por qué es obligatorio?</option>
+        <option value="17">Charla 17 – El conductor como actor vial responsable</option>
+        <option value="18">Charla 18 – Exceso de velocidad y consecuencias viales</option>
+        <option value="19">Charla 19 – Uso obligatorio del cinturón de seguridad</option>
+        <option value="20">Charla 20 – Distracciones al volante (uso del celular)</option>
+        <option value="21">Charla 21 – Inspección preoperacional del vehículo</option>
+        <option value="22">Charla 22 – Documentación obligatoria del conductor y del vehículo</option>
+        <option value="23">Charla 23 – Importancia del mantenimiento vehicular</option>
+        <option value="24">Charla 24 – Conducción segura en condiciones climáticas adversas</option>
+        <option value="25">Charla 25 – Principios del manejo defensivo</option>
+        <option value="26">Charla 26 – Conducción segura en zonas rurales y urbanas</option>
+        <option value="27">Charla 27 – Seguridad en el transporte de pasajeros</option>
+        <option value="28">Charla 28 – Seguridad en el transporte de carga</option>
+        <option value="29">Charla 29 – Protección de actores viales vulnerables</option>
+        <option value="30">Charla 30 – Reporte e investigación de siniestros viales</option>
+        <option value="31">Charla 31 – ¿Qué es la calidad en una empresa de transporte?</option>
+        <option value="32">Charla 32 – El cliente interno y el cliente externo</option>
+        <option value="33">Charla 33 – Cumplimiento de procedimientos operativos</option>
+        <option value="34">Charla 34 – Atención y servicio al usuario</option>
+        <option value="35">Charla 35 – Entregas oportunas y seguras</option>
+        <option value="36">Charla 36 – Importancia de los registros y formatos</option>
+        <option value="37">Charla 37 – Mejora continua en la operación</option>
+        <option value="38">Charla 38 – No conformidades y acciones correctivas</option>
+        <option value="39">Charla 39 – Indicadores de gestión en transporte</option>
+        <option value="40">Charla 40 – Trabajo en equipo y comunicación efectiva</option>
+        <option value="41">Charla 41 – ¿Qué es un Sistema Integrado de Gestión?</option>
+        <option value="42">Charla 42 – Cumplimiento legal en transporte</option>
+        <option value="43">Charla 43 – Roles y responsabilidades en el SIG</option>
+        <option value="44">Charla 44 – Gestión integral de riesgos</option>
+        <option value="45">Charla 45 – Cultura organizacional en seguridad y calidad</option>
+        <option value="46">Charla 46 – Comunicación interna del SIG</option>
+        <option value="47">Charla 47 – Auditorías internas: qué son y para qué sirven</option>
+        <option value="48">Charla 48 – Lecciones aprendidas de incidentes y accidentes</option>
+        <option value="49">Charla 49 – Importancia de la documentación del SIG</option>
+        <option value="50">Charla 50 – Compromiso de la alta dirección con el SIG</option>
+        <option value="51">Charla 51 – Ética y comportamiento del conductor profesional</option>
+        <option value="52">Charla 52 – Respeto por la vida en la vía</option>
+        <option value="53">Charla 53 – Toma de decisiones seguras bajo presión</option>
+        <option value="54">Charla 54 – Comunicación asertiva con usuarios y compañeros</option>
+        <option value="55">Charla 55 – Liderazgo en seguridad vial</option>
+        <option value="56">Charla 56 – Responsabilidad social en el transporte</option>
+        <option value="57">Charla 57 – Autocontrol emocional al conducir</option>
+        <option value="58">Charla 58 – La seguridad y la calidad salvan vidas</option>
+        <option value="59">Charla 59 – La seguridad y la calidad salvan vidas (Refuerzo 2)</option>
+        <option value="60">Charla 60 – La seguridad y la calidad salvan vidas (Refuerzo 3)</option>
+      </select>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
         <button type="submit">Enviar asistencia</button>
@@ -162,12 +153,8 @@
     const msg = document.getElementById("msg");
 
     frm.addEventListener("submit", () => {
-      // Mensaje inmediato
       msg.textContent = "Enviando…";
       msg.className = "";
-
-      // Después de un momento, mostramos "Registro guardado"
-      // (porque la respuesta se envía al iframe oculto)
       setTimeout(() => {
         msg.textContent = "✅ Registro guardado";
         msg.className = "ok";
@@ -177,8 +164,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
