@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Administrador - Generar link Asistencia SST</title>
+  <style>
+    body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
+    h1{margin:0 0 10px}
+    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
+    label{display:block;margin:10px 0 6px;font-weight:600}
+    input,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
+    button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .ok{color:#0a7a0a;font-weight:700}
+    .err{color:#b00020;font-weight:700}
+    small{color:#666}
+  </style>
+</head>
+<body>
+  <h1>*** Admin - Generar link de asistencia ***</h1>
+  <p><small>Selecciona empresa y número de charla. Se generará un link único para enviar a los colaboradores.</small></p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Empresa</label>
+        <input id="empresa_admin" placeholder="Ej: COOTRAESCAL" required />
+      </div>
+      <div>
+        <label>Número de charla</label>
+        <select id="charla_admin" required>
+          <option value="" disabled selected>Seleccione…</option>
+          <!-- 1..60 -->
+          <option value="1">Charla 01</option>
+          <option value="2">Charla 02</option>
+          <option value="3">Charla 03</option>
+          <option value="4">Charla 04</option>
+          <option value="5">Charla 05</option>
+          <option value="6">Charla 06</option>
+          <option value="7">Charla 07</option>
+          <option value="8">Charla 08</option>
+          <option value="9">Charla 09</option>
+          <option value="10">Charla 10</option>
+          <option value="11">Charla 11</option>
+          <option value="12">Charla 12</option>
+          <option value="13">Charla 13</option>
+          <option value="14">Charla 14</option>
+          <option value="15">Charla 15</option>
+          <option value="16">Charla 16</option>
+          <option value="17">Charla 17</option>
+          <option value="18">Charla 18</option>
+          <option value="19">Charla 19</option>
+          <option value="20">Charla 20</option>
+          <option value="21">Charla 21</option>
+          <option value="22">Charla 22</option>
+          <option value="23">Charla 23</option>
+          <option value="24">Charla 24</option>
+          <option value="25">Charla 25</option>
+          <option value="26">Charla 26</option>
+          <option value="27">Charla 27</option>
+          <option value="28">Charla 28</option>
+          <option value="29">Charla 29</option>
+          <option value="30">Charla 30</option>
+          <option value="31">Charla 31</option>
+          <option value="32">Charla 32</option>
+          <option value="33">Charla 33</option>
+          <option value="34">Charla 34</option>
+          <option value="35">Charla 35</option>
+          <option value="36">Charla 36</option>
+          <option value="37">Charla 37</option>
+          <option value="38">Charla 38</option>
+          <option value="39">Charla 39</option>
+          <option value="40">Charla 40</option>
+          <option value="41">Charla 41</option>
+          <option value="42">Charla 42</option>
+          <option value="43">Charla 43</option>
+          <option value="44">Charla 44</option>
+          <option value="45">Charla 45</option>
+          <option value="46">Charla 46</option>
+          <option value="47">Charla 47</option>
+          <option value="48">Charla 48</option>
+          <option value="49">Charla 49</option>
+          <option value="50">Charla 50</option>
+          <option value="51">Charla 51</option>
+          <option value="52">Charla 52</option>
+          <option value="53">Charla 53</option>
+          <option value="54">Charla 54</option>
+          <option value="55">Charla 55</option>
+          <option value="56">Charla 56</option>
+          <option value="57">Charla 57</option>
+          <option value="58">Charla 58</option>
+          <option value="59">Charla 59</option>
+          <option value="60">Charla 60</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button id="btn_generar">Generar link</button>
+      <button id="btn_copiar" type="button">Copiar</button>
+      <span id="msg"></span>
+    </div>
+
+    <div style="margin-top:12px">
+      <label>Link generado</label>
+      <input id="link" readonly />
+    </div>
+  </div>
+
+  <script>
+    const empresa = document.getElementById("empresa_admin");
+    const charla = document.getElementById("charla_admin");
+    const link = document.getElementById("link");
+    const msg = document.getElementById("msg");
+
+    function getBaseIndexUrl() {
+      // Si estás en /admin.html, genera /index.html
+      const url = new URL(window.location.href);
+      url.pathname = url.pathname.replace(/admin\.html$/i, "index.html");
+      url.search = "";
+      url.hash = "";
+      return url.toString();
+    }
+
+    document.getElementById("btn_generar").addEventListener("click", (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+      msg.className = "";
+
+      if (!empresa.value.trim() || !charla.value) {
+        msg.textContent = "❌ Completa Empresa y Charla";
+        msg.className = "err";
+        return;
+      }
+
+      const base = getBaseIndexUrl();
+      const u = new URL(base);
+      u.searchParams.set("empresa", empresa.value.trim());
+      u.searchParams.set("charla_num", charla.value);
+
+      link.value = u.toString();
+      msg.textContent = "✅ Link generado";
+      msg.className = "ok";
+    });
+
+    document.getElementById("btn_copiar").addEventListener("click", async () => {
+      if (!link.value) {
+        msg.textContent = "❌ Primero genera el link";
+        msg.className = "err";
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(link.value);
+        msg.textContent = "✅ Copiado";
+        msg.className = "ok";
+      } catch {
+        link.select();
+        document.execCommand("copy");
+        msg.textContent = "✅ Copiado";
+        msg.className = "ok";
+      }
+    });
+  </script>
+</body>
+</html>
