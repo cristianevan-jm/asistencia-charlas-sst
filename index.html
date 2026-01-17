@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Asistencia Charlas SST</title>
+  <title>Asistencia Charlas</title>
   <style>
     body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
     h1{margin:0 0 10px}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
     label{display:block;margin:10px 0 6px;font-weight:600}
-    input,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
     button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .ok{color:#0a7a0a;font-weight:700}
@@ -18,7 +18,7 @@
   </style>
 </head>
 <body>
-    <h1 style="text-align:center">*** Asistencia Charlas SST ***</h1>
+  <h1 style="text-align:center">*** Asistencia Charlas SST ***</h1>
   <div style="text-align:center;margin-bottom:10px">
   <img src="logo.jpeg" alt="Logo empresa" style="max-height:90px">
 </div>
@@ -29,7 +29,7 @@
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
     <form id="frm"
-      action="https://script.google.com/macros/s/AKfycbyH5mtQwSJ4LK34g3okPW0rI25y_-PtYVg33a5f9DlPLdX1AuXF-JEM6hkLalvsQHyeZg/exec"
+      action="https://script.google.com/macros/s/AKfycbzemaCufZ_skzmvkiGslYP21sCqYC25fCm3lFgv8xLGOAi7S2xa90pbFjllYyEzW1jdwg/exec"
       method="POST"
       target="hidden_iframe">
 
@@ -77,75 +77,45 @@
         </div>
       </div>
 
-      <label>Charla leída</label>
+      <label>Actividad</label>
+      <input name="actividad" id="actividad" readonly />
 
-      <!-- ✅ Este hidden SIEMPRE se envía -->
+      <label>Responsable</label>
+      <input name="responsable" id="responsable" readonly />
+
+      <label>Objetivo</label>
+      <textarea name="objetivo" id="objetivo" rows="2" readonly></textarea>
+
+      <label>Temas a tratar</label>
+      <textarea name="temas" id="temas" rows="3" readonly></textarea>
+
+      <label>Charla (N°)</label>
       <input type="hidden" name="charla_num" id="charla_num_hidden" />
-
-      <!-- ✅ El select se puede bloquear si viene por link -->
       <select id="charla_select" required>
         <option value="" disabled selected>Seleccione…</option>
-        <option value="1">Charla 01</option>
-        <option value="2">Charla 02</option>
-        <option value="3">Charla 03</option>
-        <option value="4">Charla 04</option>
-        <option value="5">Charla 05</option>
-        <option value="6">Charla 06</option>
-        <option value="7">Charla 07</option>
-        <option value="8">Charla 08</option>
-        <option value="9">Charla 09</option>
-        <option value="10">Charla 10</option>
-        <option value="11">Charla 11</option>
-        <option value="12">Charla 12</option>
-        <option value="13">Charla 13</option>
-        <option value="14">Charla 14</option>
-        <option value="15">Charla 15</option>
-        <option value="16">Charla 16</option>
-        <option value="17">Charla 17</option>
-        <option value="18">Charla 18</option>
-        <option value="19">Charla 19</option>
-        <option value="20">Charla 20</option>
-        <option value="21">Charla 21</option>
-        <option value="22">Charla 22</option>
-        <option value="23">Charla 23</option>
-        <option value="24">Charla 24</option>
-        <option value="25">Charla 25</option>
-        <option value="26">Charla 26</option>
-        <option value="27">Charla 27</option>
-        <option value="28">Charla 28</option>
-        <option value="29">Charla 29</option>
-        <option value="30">Charla 30</option>
-        <option value="31">Charla 31</option>
-        <option value="32">Charla 32</option>
-        <option value="33">Charla 33</option>
-        <option value="34">Charla 34</option>
-        <option value="35">Charla 35</option>
-        <option value="36">Charla 36</option>
-        <option value="37">Charla 37</option>
-        <option value="38">Charla 38</option>
-        <option value="39">Charla 39</option>
-        <option value="40">Charla 40</option>
-        <option value="41">Charla 41</option>
-        <option value="42">Charla 42</option>
-        <option value="43">Charla 43</option>
-        <option value="44">Charla 44</option>
-        <option value="45">Charla 45</option>
-        <option value="46">Charla 46</option>
-        <option value="47">Charla 47</option>
-        <option value="48">Charla 48</option>
-        <option value="49">Charla 49</option>
-        <option value="50">Charla 50</option>
-        <option value="51">Charla 51</option>
-        <option value="52">Charla 52</option>
-        <option value="53">Charla 53</option>
-        <option value="54">Charla 54</option>
-        <option value="55">Charla 55</option>
-        <option value="56">Charla 56</option>
-        <option value="57">Charla 57</option>
-        <option value="58">Charla 58</option>
-        <option value="59">Charla 59</option>
-        <option value="60">Charla 60</option>
+        <option value="1">Charla 01</option><option value="2">Charla 02</option><option value="3">Charla 03</option>
+        <option value="4">Charla 04</option><option value="5">Charla 05</option><option value="6">Charla 06</option>
+        <option value="7">Charla 07</option><option value="8">Charla 08</option><option value="9">Charla 09</option>
+        <option value="10">Charla 10</option><option value="11">Charla 11</option><option value="12">Charla 12</option>
+        <option value="13">Charla 13</option><option value="14">Charla 14</option><option value="15">Charla 15</option>
+        <option value="16">Charla 16</option><option value="17">Charla 17</option><option value="18">Charla 18</option>
+        <option value="19">Charla 19</option><option value="20">Charla 20</option><option value="21">Charla 21</option>
+        <option value="22">Charla 22</option><option value="23">Charla 23</option><option value="24">Charla 24</option>
+        <option value="25">Charla 25</option><option value="26">Charla 26</option><option value="27">Charla 27</option>
+        <option value="28">Charla 28</option><option value="29">Charla 29</option><option value="30">Charla 30</option>
+        <option value="31">Charla 31</option><option value="32">Charla 32</option><option value="33">Charla 33</option>
+        <option value="34">Charla 34</option><option value="35">Charla 35</option><option value="36">Charla 36</option>
+        <option value="37">Charla 37</option><option value="38">Charla 38</option><option value="39">Charla 39</option>
+        <option value="40">Charla 40</option><option value="41">Charla 41</option><option value="42">Charla 42</option>
+        <option value="43">Charla 43</option><option value="44">Charla 44</option><option value="45">Charla 45</option>
+        <option value="46">Charla 46</option><option value="47">Charla 47</option><option value="48">Charla 48</option>
+        <option value="49">Charla 49</option><option value="50">Charla 50</option><option value="51">Charla 51</option>
+        <option value="52">Charla 52</option><option value="53">Charla 53</option><option value="54">Charla 54</option>
+        <option value="55">Charla 55</option><option value="56">Charla 56</option><option value="57">Charla 57</option>
+        <option value="58">Charla 58</option><option value="59">Charla 59</option><option value="60">Charla 60</option>
       </select>
+
+      <div id="preguntas_box"></div>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
         <button type="submit">Enviar asistencia</button>
@@ -159,28 +129,80 @@
 
     const empresaParam = params.get("empresa");
     const charlaParam = params.get("charla_num");
+    const actividadParam = params.get("actividad") || "";
+    const responsableParam = params.get("responsable") || "";
+    const objetivoParam = params.get("objetivo") || "";
+    const temasParam = params.get("temas") || "";
+    const preguntasParam = params.get("q") || "";
 
     const empresaInput = document.getElementById("empresa");
+    const actividadInput = document.getElementById("actividad");
+    const responsableInput = document.getElementById("responsable");
+    const objetivoInput = document.getElementById("objetivo");
+    const temasInput = document.getElementById("temas");
+
     const charlaSelect = document.getElementById("charla_select");
     const charlaHidden = document.getElementById("charla_num_hidden");
 
-    // Si viene empresa por link -> rellenar y bloquear
     if (empresaParam) {
       empresaInput.value = empresaParam;
       empresaInput.readOnly = true;
     }
 
-    // Si viene charla por link -> seleccionar y bloquear
+    actividadInput.value = actividadParam;
+    responsableInput.value = responsableParam;
+    objetivoInput.value = objetivoParam;
+    temasInput.value = temasParam;
+
     if (charlaParam) {
       charlaSelect.value = charlaParam;
-      charlaSelect.disabled = true; // OJO: disabled no se envía, por eso usamos hidden
+      charlaSelect.disabled = true; // disabled no se envía
       charlaHidden.value = charlaParam;
     } else {
-      // si NO viene por link, se toma lo que el usuario elija
       charlaHidden.value = charlaSelect.value;
-      charlaSelect.addEventListener("change", () => {
-        charlaHidden.value = charlaSelect.value;
+      charlaSelect.addEventListener("change", () => charlaHidden.value = charlaSelect.value);
+    }
+
+    const box = document.getElementById("preguntas_box");
+    const preguntas = preguntasParam ? preguntasParam.split("||").map(s => s.trim()).filter(Boolean) : [];
+
+    if (preguntas.length) {
+      const h = document.createElement("label");
+      h.textContent = "Evaluación (Verdadero / Falso)";
+      box.appendChild(h);
+
+      preguntas.forEach((q, idx) => {
+        const wrap = document.createElement("div");
+        wrap.style.marginTop = "10px";
+
+        const lab = document.createElement("label");
+        lab.textContent = (idx + 1) + ". " + q;
+        wrap.appendChild(lab);
+
+        const sel = document.createElement("select");
+        sel.name = "resp_" + (idx + 1);
+        sel.required = true;
+        sel.innerHTML = `
+          <option value="" disabled selected>Seleccione…</option>
+          <option value="Verdadero">Verdadero</option>
+          <option value="Falso">Falso</option>
+        `;
+        wrap.appendChild(sel);
+
+        const hiddenQ = document.createElement("input");
+        hiddenQ.type = "hidden";
+        hiddenQ.name = "preg_" + (idx + 1);
+        hiddenQ.value = q;
+        wrap.appendChild(hiddenQ);
+
+        box.appendChild(wrap);
       });
+
+      const n = document.createElement("input");
+      n.type = "hidden";
+      n.name = "n_preguntas";
+      n.value = String(preguntas.length);
+      box.appendChild(n);
     }
 
     const frm = document.getElementById("frm");
@@ -198,7 +220,3 @@
   </script>
 </body>
 </html>
-
-
-
-
