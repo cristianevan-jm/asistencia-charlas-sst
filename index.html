@@ -1,169 +1,139 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8">
   <title>Asistencia Charlas SST</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
-    body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
-    h1{margin:0 0 10px}
-    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
-    label{display:block;margin:10px 0 6px;font-weight:600}
-    input,select{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
-    button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
+    body{font-family:Arial;max-width:820px;margin:30px auto;padding:0 15px}
+    h1{text-align:center}
+    label{font-weight:bold;display:block;margin-top:10px}
+    input,select,button{width:100%;padding:10px;margin-top:5px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .ok{color:#0a7a0a;font-weight:700}
-    .err{color:#b00020;font-weight:700}
-    small{color:#666}
+    .card{border:1px solid #ccc;border-radius:12px;padding:18px}
+    button{margin-top:20px;background:#2e7d32;color:white;border:0;border-radius:8px;font-size:16px}
   </style>
 </head>
+
 <body>
-  <h1>*** Asistencia Charlas SST ***</h1>
-  <p><small>Un solo link para registrar lectura de charlas. (Los datos se guardan en una hoja de cálculo.)</small></p>
 
-  <div class="card">
-    <form id="frm">
-      <div class="row">
-        <div>
-          <label for="nombre">Nombre</label>
-          <input id="nombre" required />
-        </div>
-        <div>
-          <label for="apellido">Apellido</label>
-          <input id="apellido" required />
-        </div>
-      </div>
+<h1>*** Asistencia Charlas SST ***</h1>
+<p style="text-align:center">Un solo link para registrar lectura de charlas</p>
 
-      <div class="row">
-        <div>
-          <label for="ciudad">Ciudad</label>
-          <input id="ciudad" required />
-        </div>
-        <div>
-          <label for="lateral">Lateral / Placa del vehículo</label>
-          <input id="lateral" required />
-        </div>
-      </div>
+<div class="card">
 
-      <div class="row">
-        <div>
-          <label for="empresa">Empresa</label>
-          <input id="empresa" required />
-        </div>
-        <div>
-          <label for="contrato">Contrato / dónde presta servicio</label>
-          <input id="contrato" required />
-        </div>
-      </div>
+<form 
+  action="https://script.google.com/macros/s/AKfycbxEqk8EJy0dw_ydpTdh_ccxB3jNmxZ4W1pZKbRNqkkbkE89WSQvk6Ii9q_YtdqAWHbbKQ/exec"
+  method="POST">
 
-      <label for="charla">Charla leída</label>
-      <select id="charla" required>
-        <option value="" disabled selected>Seleccione…</option>
-        <!-- ✅ Aquí puedes reemplazar por tus 54 charlas con título -->
-        <option value="Charla 01">Charla 01</option>
-        <option value="Charla 02">Charla 02</option>
-        <option value="Charla 03">Charla 03</option>
-        <option value="Charla 04">Charla 04</option>
-        <option value="Charla 05">Charla 05</option>
-        <option value="Charla 06">Charla 06</option>
-        <option value="Charla 07">Charla 07</option>
-        <option value="Charla 08">Charla 08</option>
-        <option value="Charla 09">Charla 09</option>
-        <option value="Charla 10">Charla 10</option>
-        <option value="Charla 11">Charla 11</option>
-        <option value="Charla 12">Charla 12</option>
-        <option value="Charla 13">Charla 13</option>
-        <option value="Charla 14">Charla 14</option>
-        <option value="Charla 15">Charla 15</option>
-        <option value="Charla 16">Charla 16</option>
-        <option value="Charla 17">Charla 17</option>
-        <option value="Charla 18">Charla 18</option>
-        <option value="Charla 19">Charla 19</option>
-        <option value="Charla 20">Charla 20</option>
-        <option value="Charla 21">Charla 21</option>
-        <option value="Charla 22">Charla 22</option>
-        <option value="Charla 23">Charla 23</option>
-        <option value="Charla 24">Charla 24</option>
-        <option value="Charla 25">Charla 25</option>
-        <option value="Charla 26">Charla 26</option>
-        <option value="Charla 27">Charla 27</option>
-        <option value="Charla 28">Charla 28</option>
-        <option value="Charla 29">Charla 29</option>
-        <option value="Charla 30">Charla 30</option>
-        <option value="Charla 31">Charla 31</option>
-        <option value="Charla 32">Charla 32</option>
-        <option value="Charla 33">Charla 33</option>
-        <option value="Charla 34">Charla 34</option>
-        <option value="Charla 35">Charla 35</option>
-        <option value="Charla 36">Charla 36</option>
-        <option value="Charla 37">Charla 37</option>
-        <option value="Charla 38">Charla 38</option>
-        <option value="Charla 39">Charla 39</option>
-        <option value="Charla 40">Charla 40</option>
-        <option value="Charla 41">Charla 41</option>
-        <option value="Charla 42">Charla 42</option>
-        <option value="Charla 43">Charla 43</option>
-        <option value="Charla 44">Charla 44</option>
-        <option value="Charla 45">Charla 45</option>
-        <option value="Charla 46">Charla 46</option>
-        <option value="Charla 47">Charla 47</option>
-        <option value="Charla 48">Charla 48</option>
-        <option value="Charla 49">Charla 49</option>
-        <option value="Charla 50">Charla 50</option>
-        <option value="Charla 51">Charla 51</option>
-        <option value="Charla 52">Charla 52</option>
-        <option value="Charla 53">Charla 53</option>
-        <option value="Charla 54">Charla 54</option>
-      </select>
-
-      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
-        <button type="submit">Enviar asistencia</button>
-        <span id="msg"></span>
-      </div>
-    </form>
+  <div class="row">
+    <div>
+      <label>Nombre</label>
+      <input name="nombre" required>
+    </div>
+    <div>
+      <label>Apellido</label>
+      <input name="apellido" required>
+    </div>
   </div>
 
-  <script>
-    // ✅ Pega la URL del Web App de Apps Script (termina en /exec)
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycby98PRfYU_w3YEEL4LrChGaPaEsSjBFI9vidTldqbX1Tgiz5G0XjSJuNF-x-a_AhbyeiA/exec";
+  <div class="row">
+    <div>
+      <label>Cédula</label>
+      <input name="cedula" required>
+    </div>
+    <div>
+      <label>Cargo</label>
+      <input name="cargo" required>
+    </div>
+  </div>
 
-    const frm = document.getElementById("frm");
-    const msg = document.getElementById("msg");
+  <div class="row">
+    <div>
+      <label>Ciudad</label>
+      <input name="ciudad" required>
+    </div>
+    <div>
+      <label>Lateral / Placa del vehículo</label>
+      <input name="lateral" required>
+    </div>
+  </div>
 
-    frm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.textContent = "Enviando…";
-      msg.className = "";
+  <div class="row">
+    <div>
+      <label>Empresa</label>
+      <input name="empresa" required>
+    </div>
+    <div>
+      <label>Contrato / dónde presta servicio</label>
+      <input name="contrato" required>
+    </div>
+  </div>
 
-      // ✅ Enviar como formulario (evita preflight CORS)
-      const payload = new URLSearchParams({
-        nombre: document.getElementById("nombre").value.trim(),
-        apellido: document.getElementById("apellido").value.trim(),
-        ciudad: document.getElementById("ciudad").value.trim(),
-        lateral: document.getElementById("lateral").value.trim(),
-        empresa: document.getElementById("empresa").value.trim(),
-        contrato: document.getElementById("contrato").value.trim(),
-        charla: document.getElementById("charla").value
-      });
+  <label>Charla leída</label>
+  <select name="charla" required>
+    <option value="">Seleccione…</option>
+    <option>Charla 01</option>
+    <option>Charla 02</option>
+    <option>Charla 03</option>
+    <option>Charla 04</option>
+    <option>Charla 05</option>
+    <option>Charla 06</option>
+    <option>Charla 07</option>
+    <option>Charla 08</option>
+    <option>Charla 09</option>
+    <option>Charla 10</option>
+    <option>Charla 11</option>
+    <option>Charla 12</option>
+    <option>Charla 13</option>
+    <option>Charla 14</option>
+    <option>Charla 15</option>
+    <option>Charla 16</option>
+    <option>Charla 17</option>
+    <option>Charla 18</option>
+    <option>Charla 19</option>
+    <option>Charla 20</option>
+    <option>Charla 21</option>
+    <option>Charla 22</option>
+    <option>Charla 23</option>
+    <option>Charla 24</option>
+    <option>Charla 25</option>
+    <option>Charla 26</option>
+    <option>Charla 27</option>
+    <option>Charla 28</option>
+    <option>Charla 29</option>
+    <option>Charla 30</option>
+    <option>Charla 31</option>
+    <option>Charla 32</option>
+    <option>Charla 33</option>
+    <option>Charla 34</option>
+    <option>Charla 35</option>
+    <option>Charla 36</option>
+    <option>Charla 37</option>
+    <option>Charla 38</option>
+    <option>Charla 39</option>
+    <option>Charla 40</option>
+    <option>Charla 41</option>
+    <option>Charla 42</option>
+    <option>Charla 43</option>
+    <option>Charla 44</option>
+    <option>Charla 45</option>
+    <option>Charla 46</option>
+    <option>Charla 47</option>
+    <option>Charla 48</option>
+    <option>Charla 49</option>
+    <option>Charla 50</option>
+    <option>Charla 51</option>
+    <option>Charla 52</option>
+    <option>Charla 53</option>
+    <option>Charla 54</option>
+  </select>
 
-      try {
-        const res = await fetch(ENDPOINT, {
-          method: "POST",
-          body: payload
-        });
+  <button type="submit">Enviar asistencia</button>
+</form>
 
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error || "Error al guardar");
+</div>
 
-        msg.textContent = "✅ Registro guardado";
-        msg.className = "ok";
-        frm.reset();
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
-        msg.className = "err";
-      }
-    });
-  </script>
 </body>
 </html>
-
