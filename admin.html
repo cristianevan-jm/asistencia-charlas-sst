@@ -4,20 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Administrador - Generar link</title>
+
   <style>
     *{ box-sizing:border-box; }
     body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
     h1{margin:0 0 10px}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
     label{display:block;margin:10px 0 6px;font-weight:600}
-    input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
-    button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+    .row>div{min-width:0}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
+    textarea{resize:vertical}
+    button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
     .ok{color:#0a7a0a;font-weight:700}
     .err{color:#b00020;font-weight:700}
     small{color:#666}
+    @media (max-width:680px){ .row{grid-template-columns:1fr} }
   </style>
 </head>
+
 <body>
   <h1 style="text-align:center">*** Admin - Generar link ***</h1>
   <p><small>Configura la actividad y evaluación. Se generará un link único para los colaboradores.</small></p>
@@ -25,30 +30,31 @@
   <div class="card">
 
     <!-- Row 1 -->
-<div class="row">
-  <div>
-    <label>Empresa</label>
-    <input id="empresa_admin" placeholder="Ej: COOTRAESCAL" required />
-  </div>
+    <div class="row">
+      <div>
+        <label>Empresa</label>
+        <input id="empresa_admin" placeholder="Ej: COOTRAESCAL" required />
+      </div>
 
-  <div>
-    <label>Actividad</label>
-    <select id="actividad_admin" required>
-      <option value="" disabled selected>Seleccione…</option>
-      <option value="Socialización">Socialización</option>
-      <option value="Capacitación">Capacitación</option>
-      <option value="Reunión">Reunión</option>
-      <option value="Taller">Taller</option>
-    </select>
-  </div>
-</div>
+      <div>
+        <label>Actividad</label>
+        <select id="actividad_admin" required>
+          <option value="" disabled selected>Seleccione…</option>
+          <option value="Socialización">Socialización</option>
+          <option value="Capacitación">Capacitación</option>
+          <option value="Reunión">Reunión</option>
+          <option value="Taller">Taller</option>
+        </select>
+      </div>
+    </div>
+
     <!-- Row 2 -->
-<div class="row">
-  <div>
-    <label>Número de charla</label>
-    <select id="charla_admin" disabled>
-      <option value="" disabled selected>Seleccione…</option>
-      <option value="1">Charla 01 – La seguridad comienza conmigo</option>
+    <div class="row">
+      <div>
+        <label>Número de charla</label>
+        <select id="charla_admin" disabled>
+          <option value="" disabled selected>Seleccione…</option>
+          <option value="1">Charla 01 – La seguridad comienza conmigo</option>
           <option value="2">Charla 02 – Identificación de peligros en la operación de transporte</option>
           <option value="3">Charla 03 – Uso correcto de los elementos de protección personal (EPP)</option>
           <option value="4">Charla 04 – Fatiga y somnolencia en la conducción</option>
@@ -109,16 +115,16 @@
           <option value="59">Charla 59 – La seguridad y la calidad salvan vidas (Refuerzo 2)</option>
           <option value="60">Charla 60 – La seguridad y la calidad salvan vidas (Refuerzo 3)</option>
         </select>
-    </select>
-    <small>Solo se habilita si Actividad = Socialización</small>
-  </div>
+        <small>Solo se habilita si Actividad = Socialización</small>
+      </div>
 
-  <div>
-    <label>Responsable</label>
-    <input id="responsable_admin" placeholder="Nombre del responsable" />
-  </div>
-</div>
-         <!-- Row 3 -->
+      <div>
+        <label>Responsable</label>
+        <input id="responsable_admin" placeholder="Nombre del responsable" />
+      </div>
+    </div>
+
+    <!-- Row 3 -->
     <div class="row">
       <div>
         <label>Duración (minutos)</label>
@@ -164,8 +170,8 @@ Si estoy fatigado, debo reportarlo."></textarea>
 
   <script>
     const empresa = document.getElementById("empresa_admin");
-    const charla = document.getElementById("charla_admin");
     const actividad = document.getElementById("actividad_admin");
+    const charla = document.getElementById("charla_admin");
     const responsable = document.getElementById("responsable_admin");
     const duracion = document.getElementById("duracion_admin");
     const reunionTipo = document.getElementById("reunion_tipo_admin");
@@ -187,40 +193,27 @@ Si estoy fatigado, debo reportarlo."></textarea>
       return text.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, limit);
     }
 
-    function setEnabledField(el, enabled, {clearWhenDisable=true} = {}) {
+    function setEnabledField(el, enabled, clear=true){
       el.disabled = !enabled;
-      if (!enabled && clearWhenDisable) el.value = "";
+      if (!enabled && clear) el.value = "";
     }
 
     function aplicarReglasActividad() {
       const act = actividad.value;
 
-      // Por defecto: desactiva charla y tipo reunion
-      setEnabledField(charla, false, {clearWhenDisable:true});
-      setEnabledField(reunionTipo, false, {clearWhenDisable:true});
+      // Charla solo Socialización
+      setEnabledField(charla, act === "Socialización", act !== "Socialización");
 
-      // Por defecto: habilita campos generales
-      setEnabledField(responsable, true, {clearWhenDisable:false});
-      setEnabledField(duracion, true, {clearWhenDisable:false});
-      setEnabledField(objetivo, true, {clearWhenDisable:false});
-      setEnabledField(temas, true, {clearWhenDisable:false});
-      setEnabledField(preguntas, true, {clearWhenDisable:false});
+      // Tipo reunión solo Reunión
+      setEnabledField(reunionTipo, act === "Reunión", act !== "Reunión");
 
-      // Socialización: habilita charla, deshabilita preguntas
+      // Preguntas deshabilitadas en Socialización
       if (act === "Socialización") {
-        setEnabledField(charla, true, {clearWhenDisable:false});
-        setEnabledField(preguntas, false, {clearWhenDisable:true});
+        preguntas.disabled = true;
+        preguntas.value = "";
+      } else {
+        preguntas.disabled = false;
       }
-
-      // Reunión: habilita tipo de reunión, NO usa charla
-      if (act === "Reunión") {
-        setEnabledField(reunionTipo, true, {clearWhenDisable:false});
-        // charla queda desactivado
-      }
-
-      // Capacitación y Taller: NO activan charla (según tu última instrucción)
-      // Si más adelante quieres que también usen charla, cambia a:
-      // if (act === "Capacitación" || act === "Taller") setEnabledField(charla, true, {clearWhenDisable:false});
     }
 
     actividad.addEventListener("change", aplicarReglasActividad);
@@ -232,39 +225,20 @@ Si estoy fatigado, debo reportarlo."></textarea>
       msg.className = "";
 
       const act = actividad.value;
-
       if (!empresa.value.trim() || !act) {
         msg.textContent = "❌ Completa Empresa y Actividad";
         msg.className = "err";
         return;
       }
 
-      // Socialización exige charla
       if (act === "Socialización" && !charla.value) {
-        msg.textContent = "❌ En Socialización debes seleccionar Número de charla";
+        msg.textContent = "❌ Selecciona Número de charla";
         msg.className = "err";
         return;
       }
 
-      // Reunión exige tipo reunión
       if (act === "Reunión" && !reunionTipo.value) {
-        msg.textContent = "❌ En Reunión debes seleccionar el tipo de comité";
-        msg.className = "err";
-        return;
-      }
-
-      // En Reunión/Capacitación/Taller exiges campos
-      if ((act === "Reunión" || act === "Capacitación" || act === "Taller") &&
-          (!responsable.value.trim() || !duracion.value.trim() || !objetivo.value.trim() || !temas.value.trim())) {
-        msg.textContent = "❌ Completa Responsable, Duración, Objetivo y Temas";
-        msg.className = "err";
-        return;
-      }
-
-      // Socialización (preguntas no)
-      if (act === "Socialización" &&
-          (!responsable.value.trim() || !objetivo.value.trim() || !temas.value.trim())) {
-        msg.textContent = "❌ Completa Responsable, Objetivo y Temas (Socialización)";
+        msg.textContent = "❌ Selecciona tipo de Reunión (Comité)";
         msg.className = "err";
         return;
       }
@@ -273,19 +247,16 @@ Si estoy fatigado, debo reportarlo."></textarea>
       u.searchParams.set("empresa", empresa.value.trim());
       u.searchParams.set("actividad", act);
       u.searchParams.set("responsable", responsable.value.trim());
+      u.searchParams.set("duracion", duracion.value.trim());
+      u.searchParams.set("reunion_tipo", reunionTipo.value.trim());
       u.searchParams.set("objetivo", objetivo.value.trim());
       u.searchParams.set("temas", temas.value.trim());
-      if (duracion.value.trim()) u.searchParams.set("duracion", duracion.value.trim());
-
-      if (act === "Reunión") {
-        u.searchParams.set("reunion_tipo", reunionTipo.value);
-      }
 
       if (act === "Socialización") {
         u.searchParams.set("charla_num", charla.value);
-        // No preguntas
+        const charlaTexto = charla.options[charla.selectedIndex].text;
+        u.searchParams.set("charla_texto", charlaTexto);
       } else {
-        // Cap/Taller/Reunión: preguntas sí (si escribieron)
         const qs = normalizeLines(preguntas.value, 15);
         if (qs.length) u.searchParams.set("q", qs.join("||"));
       }
@@ -315,6 +286,3 @@ Si estoy fatigado, debo reportarlo."></textarea>
   </script>
 </body>
 </html>
-
-
-
