@@ -31,11 +31,11 @@
 
 <body>
   <h1>Historial</h1>
-  <p class="muted">Fecha • Tema • Nº asistentes • Lista de asistentes (Excel / PDF)</p>
+  <p class="muted">Fecha • Tema (Actividad) • Nº asistentes • Lista de asistentes (Excel / PDF)</p>
 
   <div class="card">
     <div class="row">
-      <input id="filter" placeholder="Filtrar por tema o fecha (YYYY-MM-DD)" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:10px">
+      <input id="filter" placeholder="Filtrar por actividad o fecha (YYYY-MM-DD)" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:10px">
       <button id="btn_reload">Recargar</button>
     </div>
 
@@ -80,11 +80,11 @@
   </div>
 
 <script>
-  // ✅ Pega aquí tu WebApp URL (termina en /exec)
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWlNZlOnHKZOd9H2EvgVCBm17yy0nN17KmEsxQHhXVt4R9KAQfARPlQg2FyhsI-tYv4w/exec";
+  // ✅ Pega aquí tu WebApp URL (/exec)
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvIm8wUl7yv5vDixOGPZbahV-UfeNJ_54iRPvhnyYHU5WTZ0oBAWI8Cr8qKz0RF6Lcpw/exec";
 
-  // ---------- JSONP ----------
-  function jsonp(url, cbName = "cb") {
+  // ---------- JSONP (evita CORS) ----------
+  function jsonp(url) {
     return new Promise((resolve, reject) => {
       const callback = "jsonp_" + Math.random().toString(36).slice(2);
       window[callback] = (data) => {
@@ -92,6 +92,7 @@
         script.remove();
         resolve(data);
       };
+
       const sep = url.includes("?") ? "&" : "?";
       const script = document.createElement("script");
       script.src = `${url}${sep}callback=${callback}`;
@@ -104,13 +105,12 @@
     });
   }
 
-  // ---------- UI ----------
   const tbody = document.getElementById("tbody");
   const filter = document.getElementById("filter");
 
   let historyItems = [];
   let currentAttendees = [];
-  let currentMeta = null; // {date, tema, sheet}
+  let currentMeta = null; // {date, act, sheet}
 
   async function loadHistory() {
     tbody.innerHTML = `<tr><td colspan="4" class="muted">Cargando…</td></tr>`;
@@ -141,7 +141,7 @@
         <td>${it.date}</td>
         <td>${escapeHtml(it.tema)}</td>
         <td>${it.asistentes}</td>
-        <td><button data-sheet="${escapeAttr(it.sheet)}" data-date="${it.date}" data-tema="${escapeAttr(it.tema)}">Lista de asistentes</button></td>
+        <td><button data-sheet="${escapeAttr(it.sheet)}" data-date="${it.date}" data-act="${escapeAttr(it.tema)}">Lista de asistentes</button></td>
       </tr>
     `).join("");
   }
@@ -168,21 +168,21 @@
 
     const sheet = btn.getAttribute("data-sheet");
     const date = btn.getAttribute("data-date");
-    const tema = btn.getAttribute("data-tema");
+    const act  = btn.getAttribute("data-act");
 
-    modalTitle.textContent = `Asistentes • ${date}`;
+    modalTitle.textContent = `Asistentes • ${date} • ${act}`;
     modalCount.textContent = "Cargando…";
     modalBody.innerHTML = "";
     openModal();
 
-    const data = await jsonp(`${APPS_SCRIPT_URL}?action=attendees&sheet=${encodeURIComponent(sheet)}&date=${encodeURIComponent(date)}&tema=${encodeURIComponent(tema)}`);
+    const data = await jsonp(`${APPS_SCRIPT_URL}?action=attendees&sheet=${encodeURIComponent(sheet)}&date=${encodeURIComponent(date)}&act=${encodeURIComponent(act)}`);
     if (!data.ok) {
       modalCount.textContent = "Error al cargar asistentes";
       return;
     }
 
     currentAttendees = data.items || [];
-    currentMeta = { sheet, date, tema };
+    currentMeta = { sheet, date, act };
 
     modalCount.textContent = `${currentAttendees.length} asistentes`;
     modalBody.innerHTML = currentAttendees.map(a => `
@@ -206,7 +206,7 @@
       Fecha: a.fecha,
       Nombre: a.nombre,
       Apellido: a.apellido,
-      Cédula: a.cedula,
+      "Cédula": a.cedula,
       Cargo: a.cargo,
       Empresa: a.empresa,
       Actividad: a.actividad
@@ -216,7 +216,7 @@
     const ws = XLSX.utils.json_to_sheet(rows);
     XLSX.utils.book_append_sheet(wb, ws, "Asistentes");
 
-    const fname = `Asistentes_${currentMeta.date}_${sanitizeFile(currentMeta.tema)}.xlsx`;
+    const fname = `Asistentes_${currentMeta.date}_${sanitizeFile(currentMeta.act)}.xlsx`;
     XLSX.writeFile(wb, fname);
   });
 
@@ -231,7 +231,7 @@
     doc.text(`Lista de asistentes`, 14, 14);
     doc.setFontSize(10);
     doc.text(`Fecha: ${currentMeta.date}`, 14, 20);
-    doc.text(`Tema: ${currentMeta.tema}`, 14, 26);
+    doc.text(`Actividad: ${currentMeta.act}`, 14, 26);
 
     const body = currentAttendees.map(a => [
       a.fecha, a.nombre, a.apellido, a.cedula, a.cargo, a.empresa, a.actividad
@@ -244,7 +244,7 @@
       styles: { fontSize: 8 }
     });
 
-    const fname = `Asistentes_${currentMeta.date}_${sanitizeFile(currentMeta.tema)}.pdf`;
+    const fname = `Asistentes_${currentMeta.date}_${sanitizeFile(currentMeta.act)}.pdf`;
     doc.save(fname);
   });
 
@@ -252,13 +252,10 @@
     return String(s||"").replace(/[\\\/\?\*\[\]:"]/g," ").replace(/\s+/g," ").trim().slice(0,60);
   }
 
-  // Events
   document.getElementById("btn_reload").addEventListener("click", loadHistory);
   filter.addEventListener("input", renderHistory);
 
-  // Init
   loadHistory();
 </script>
 </body>
 </html>
-
