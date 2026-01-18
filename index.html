@@ -3,105 +3,121 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Asistencia</title>
-
+  <title>Asistencia Charlas</title>
   <style>
     *{ box-sizing:border-box; }
     body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
     h1{margin:0 0 10px}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
     label{display:block;margin:10px 0 6px;font-weight:600}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row>div{min-width:0}
     input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
-    textarea{resize:vertical}
     button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
     .ok{color:#0a7a0a;font-weight:700}
+    .err{color:#b00020;font-weight:700}
     small{color:#666}
-    @media (max-width:680px){ .row{grid-template-columns:1fr} }
+    .pill{display:inline-block;padding:4px 10px;border:1px solid #ddd;border-radius:999px;font-size:12px}
   </style>
 </head>
 
 <body>
-  <h1 style="text-align:center">*** Asistencia ***</h1>
+  <h1 style="text-align:center">*** Asistencia Charlas SST ***</h1>
+
+  <div style="text-align:center;margin-bottom:10px">
+    <img src="logo.jpeg" alt="Logo empresa" style="max-height:90px">
+  </div>
+
+  <h2 style="text-align:center;margin:0 0 10px;font-size:18px">
+    La Seguridad No Espera: 5 Minutos que Hacen la Diferencia
+  </h2>
+
+  <p><small>Un solo link para registrar asistencia, evidencia y evaluación (si aplica).</small></p>
 
   <div class="card">
-    <iframe name="hidden_iframe" style="display:none;"></iframe>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
     <form id="frm"
-      action="https://script.google.com/macros/s/AKfycbyvIm8wUl7yv5vDixOGPZbahV-UfeNJ_54iRPvhnyYHU5WTZ0oBAWI8Cr8qKz0RF6Lcpw/exec"
+      action="https://script.google.com/macros/s/AKfycbzrLmqQr5K1t2_TLPPcJDGGMwVmGs7pPY-TZuvSa74reUfYcS2ZDzrKZxbYV5wY2V2AYQ/exec"
       method="POST"
       target="hidden_iframe">
 
+      <!-- Datos del colaborador -->
       <div class="row">
         <div>
           <label>Nombre</label>
-          <input name="nombre" required>
+          <input name="nombre" required />
         </div>
         <div>
           <label>Apellido</label>
-          <input name="apellido" required>
+          <input name="apellido" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Cédula</label>
-          <input name="cedula" required>
+          <input name="cedula" required />
         </div>
         <div>
           <label>Cargo</label>
-          <input name="cargo" required>
+          <input name="cargo" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Ciudad</label>
-          <input name="ciudad" required>
+          <input name="ciudad" required />
         </div>
         <div>
-          <label>Lateral / Placa</label>
-          <input name="lateral" required>
+          <label>Lateral / Placa del vehículo</label>
+          <input name="lateral" required />
         </div>
       </div>
 
       <div class="row">
         <div>
           <label>Empresa</label>
-          <input name="empresa" id="empresa" required>
+          <input name="empresa" id="empresa" required />
         </div>
         <div>
-          <label>Contrato / Servicio</label>
-          <input name="contrato" required>
+          <label>Contrato / dónde presta servicio</label>
+          <input name="contrato" required />
         </div>
       </div>
 
+      <!-- Datos cargados del link (solo lectura) -->
       <label>Actividad</label>
-      <input name="actividad" id="actividad" readonly>
+      <input name="actividad" id="actividad" readonly />
 
       <label>Responsable</label>
-      <input name="responsable" id="responsable" readonly>
+      <input name="responsable" id="responsable" readonly />
 
       <label>Duración (minutos)</label>
-      <input name="duracion" id="duracion" readonly>
+      <input name="duracion" id="duracion" readonly />
 
-      <label>Tipo de Reunión</label>
-      <input name="reunion_tipo" id="reunion_tipo" readonly>
+      <div id="reunion_wrap" style="display:none">
+        <label>Tipo de Reunión</label>
+        <input name="reunion_tipo" id="reunion_tipo" readonly />
+      </div>
+
+      <label>Tema</label>
+      <input name="tema" id="tema" readonly />
 
       <label>Objetivo</label>
       <textarea name="objetivo" id="objetivo" rows="2" readonly></textarea>
 
-      <label>Temas</label>
-      <textarea name="temas" id="temas" rows="3" readonly></textarea>
+      <label>Contenido</label>
+      <textarea name="contenido" id="contenido" rows="3" readonly></textarea>
 
-      <!-- Charla: solo Socialización -->
-      <div id="charla_box" style="display:none">
-  <label>Charla (N°)</label>
-  <input type="hidden" name="charla_num" id="charla_num">
-  <input type="hidden" name="charla_texto" id="charla_texto">
-  <select id="charla_select" disabled></select>
-</div>
+      <!-- Socialización: Charla -->
+      <div id="charla_wrap" style="display:none">
+        <label>Charla</label>
+        <input name="charla_texto" id="charla_texto" readonly />
+        <input type="hidden" name="charla_num" id="charla_num" />
+      </div>
+
+      <!-- Preguntas -->
       <div id="preguntas_box"></div>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
@@ -114,49 +130,70 @@
 <script>
   const params = new URLSearchParams(window.location.search);
 
-  // Carga parámetros
-  const actividadParam = params.get("actividad") || "";
-  const charlaNumParam = params.get("charla_num") || "";
-  const charlaTextoParam = params.get("charla_texto") || "";
-  const preguntasParam = params.get("q") || "";
+  // Params desde Admin
+  const empresaParam      = params.get("empresa") || "";
+  const actividadParam    = params.get("actividad") || "";
+  const responsableParam  = params.get("responsable") || "";
+  const duracionParam     = params.get("duracion") || "";
+  const reunionTipoParam  = params.get("reunion_tipo") || "";
+  const temaParam         = params.get("tema") || "";
+  const objetivoParam     = params.get("objetivo") || "";
+  const contenidoParam    = params.get("contenido") || "";
+  const charlaNumParam    = params.get("charla_num") || "";
+  const charlaTextoParam  = params.get("charla_texto") || "";
+  const preguntasParam    = params.get("q") || "";
 
-  // Set campos desde el link
-  ["empresa","actividad","responsable","duracion","reunion_tipo","objetivo","temas"].forEach(id=>{
-    const el = document.getElementById(id);
-    const val = params.get(id);
-    if (el && val !== null) el.value = val;
-  });
-
-  // Empresa: si viene por link, bloquear edición
+  // Campos
   const empresaInput = document.getElementById("empresa");
-  if (params.get("empresa")) empresaInput.readOnly = true;
+  const actividadInput = document.getElementById("actividad");
+  const responsableInput = document.getElementById("responsable");
+  const duracionInput = document.getElementById("duracion");
+  const reunionWrap = document.getElementById("reunion_wrap");
+  const reunionTipoInput = document.getElementById("reunion_tipo");
+  const temaInput = document.getElementById("tema");
+  const objetivoInput = document.getElementById("objetivo");
+  const contenidoInput = document.getElementById("contenido");
 
-  // Charla solo Socialización
-  const charlaBox = document.getElementById("charla_box");
-  const charlaHidden = document.getElementById("charla_num");
-  const charlaSelect = document.getElementById("charla_select");
+  const charlaWrap = document.getElementById("charla_wrap");
+  const charlaTextoInput = document.getElementById("charla_texto");
+  const charlaNumHidden = document.getElementById("charla_num");
 
-  const charlaTextoHidden = document.getElementById("charla_texto");
+  // Empresa
+  if (empresaParam) {
+    empresaInput.value = empresaParam;
+    empresaInput.readOnly = true;
+  }
 
-if (actividadParam === "Socialización" && charlaNumParam) {
-  charlaBox.style.display = "block";
-  charlaHidden.value = charlaNumParam;
+  // Cargar datos del link
+  actividadInput.value = actividadParam;
+  responsableInput.value = responsableParam;
+  duracionInput.value = duracionParam;
+  temaInput.value = temaParam;
+  objetivoInput.value = objetivoParam;
+  contenidoInput.value = contenidoParam;
 
-  const texto = charlaTextoParam || `Charla ${String(charlaNumParam).padStart(2,"0")}`;
-  charlaTextoHidden.value = texto; // ✅ esto viaja al Sheet
-  charlaSelect.innerHTML = `<option selected>${texto}</option>`;
-} else {
-  charlaBox.style.display = "none";
-  charlaHidden.value = "";
-  charlaTextoHidden.value = "";
-}
+  // Reunión
+  if (actividadParam === "Reunión" && reunionTipoParam) {
+    reunionWrap.style.display = "block";
+    reunionTipoInput.value = reunionTipoParam;
+  }
 
+  // Socialización: mostrar charla
+  if (actividadParam === "Socialización" && charlaNumParam) {
+    charlaWrap.style.display = "block";
+    charlaTextoInput.value = charlaTextoParam || `Charla ${String(charlaNumParam).padStart(2,"0")}`;
+    charlaNumHidden.value = charlaNumParam;
+  }
 
-  // Preguntas: NO en Socialización
+  // Preguntas: solo para Capacitacion/Taller/Reunión
   const box = document.getElementById("preguntas_box");
-  const preguntas = preguntasParam ? preguntasParam.split("||").map(s=>s.trim()).filter(Boolean) : [];
+  const actConEvaluacion = (actividadParam === "Capacitación" || actividadParam === "Taller" || actividadParam === "Reunión");
 
-  if (actividadParam !== "Socialización" && preguntas.length) {
+  const preguntas = (preguntasParam && actConEvaluacion)
+    ? preguntasParam.split("||").map(s => s.trim()).filter(Boolean)
+    : [];
+
+  if (preguntas.length) {
     const h = document.createElement("label");
     h.textContent = "Evaluación (Verdadero / Falso)";
     box.appendChild(h);
@@ -193,38 +230,28 @@ if (actividadParam === "Socialización" && charlaNumParam) {
     n.name = "n_preguntas";
     n.value = String(preguntas.length);
     box.appendChild(n);
+  } else {
+    // Si no hay preguntas, envía n_preguntas=0 para consistencia
+    const n = document.createElement("input");
+    n.type = "hidden";
+    n.name = "n_preguntas";
+    n.value = "0";
+    box.appendChild(n);
   }
 
-  // Reset Selectivo
+  // Envío sin redirección
   const frm = document.getElementById("frm");
   const msg = document.getElementById("msg");
-
-  function resetSelective() {
-    frm.querySelectorAll('input:not([type="hidden"]):not([readonly]):not([disabled])')
-      .forEach(i => i.value = "");
-
-    frm.querySelectorAll('select:not([disabled])')
-      .forEach(s => s.selectedIndex = 0);
-
-    frm.querySelectorAll('textarea:not([readonly]):not([disabled])')
-      .forEach(t => t.value = "");
-  }
 
   frm.addEventListener("submit", () => {
     msg.textContent = "Enviando…";
     msg.className = "";
-
     setTimeout(() => {
       msg.textContent = "✅ Registro guardado";
       msg.className = "ok";
-      resetSelective();
+      frm.reset();
     }, 900);
   });
 </script>
-
 </body>
 </html>
-
-
-
-
