@@ -4,22 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Administrador - Generar link</title>
-
   <style>
     *{ box-sizing:border-box; }
     body{font-family:system-ui,Arial;max-width:780px;margin:24px auto;padding:0 14px}
     h1{margin:0 0 10px}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
     label{display:block;margin:10px 0 6px;font-weight:600}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
-    .row>div{min-width:0}
     input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
-    textarea{resize:vertical}
     button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
     .ok{color:#0a7a0a;font-weight:700}
     .err{color:#b00020;font-weight:700}
     small{color:#666}
-    @media (max-width:680px){ .row{grid-template-columns:1fr} }
   </style>
 </head>
 
@@ -29,7 +25,7 @@
 
   <div class="card">
 
-    <!-- Row 1 -->
+    <!-- Row 1: Empresa + Actividad -->
     <div class="row">
       <div>
         <label>Empresa</label>
@@ -48,7 +44,7 @@
       </div>
     </div>
 
-    <!-- Row 2 -->
+    <!-- Row 2: Número de charla + Responsable -->
     <div class="row">
       <div>
         <label>Número de charla</label>
@@ -124,7 +120,7 @@
       </div>
     </div>
 
-    <!-- Row 3 -->
+    <!-- Row 3: Duración + Tipo de Reunión -->
     <div class="row">
       <div>
         <label>Duración (minutos)</label>
@@ -143,11 +139,16 @@
       </div>
     </div>
 
+    <!-- ✅ NUEVO: Tema -->
+    <label>Tema</label>
+    <input id="tema_admin" placeholder="Ej: Alcohol, drogas y conducción segura" />
+
     <label>Objetivo</label>
     <textarea id="objetivo_admin" rows="2" placeholder="Ej: Sensibilizar sobre..."></textarea>
 
-    <label>Temas a tratar (puedes escribir varios)</label>
-    <textarea id="temas_admin" rows="3" placeholder="- Tema 1&#10;- Tema 2&#10;- Tema 3"></textarea>
+    <!-- ✅ Cambiado: Temas a tratar -> Contenido -->
+    <label>Contenido (puedes escribir varios)</label>
+    <textarea id="contenido_admin" rows="3" placeholder="- Punto 1&#10;- Punto 2&#10;- Punto 3"></textarea>
 
     <label>Preguntas de evaluación (una por línea) - Verdadero/Falso</label>
     <textarea id="preguntas_admin" rows="6" placeholder="Ej:
@@ -159,6 +160,7 @@ Si estoy fatigado, debo reportarlo."></textarea>
     <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <button id="btn_generar">Generar link</button>
       <button id="btn_copiar" type="button">Copiar</button>
+      <button id="btn_historial" type="button">Ir a Historial</button>
       <span id="msg"></span>
     </div>
 
@@ -175,8 +177,9 @@ Si estoy fatigado, debo reportarlo."></textarea>
     const responsable = document.getElementById("responsable_admin");
     const duracion = document.getElementById("duracion_admin");
     const reunionTipo = document.getElementById("reunion_tipo_admin");
+    const tema = document.getElementById("tema_admin");
     const objetivo = document.getElementById("objetivo_admin");
-    const temas = document.getElementById("temas_admin");
+    const contenido = document.getElementById("contenido_admin");
     const preguntas = document.getElementById("preguntas_admin");
     const link = document.getElementById("link");
     const msg = document.getElementById("msg");
@@ -189,30 +192,46 @@ Si estoy fatigado, debo reportarlo."></textarea>
       return url.toString();
     }
 
+    function getHistorialUrl() {
+      const url = new URL(window.location.href);
+      url.pathname = url.pathname.replace(/admin\.html$/i, "historial.html");
+      url.search = "";
+      url.hash = "";
+      return url.toString();
+    }
+
     function normalizeLines(text, limit) {
       return text.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, limit);
     }
 
-    function setEnabledField(el, enabled, clear=true){
+    function setEnabledField(el, enabled, {clearWhenDisable=true} = {}) {
       el.disabled = !enabled;
-      if (!enabled && clear) el.value = "";
+      if (!enabled && clearWhenDisable) el.value = "";
     }
 
     function aplicarReglasActividad() {
       const act = actividad.value;
 
-      // Charla solo Socialización
-      setEnabledField(charla, act === "Socialización", act !== "Socialización");
+      // defaults
+      setEnabledField(charla, false, {clearWhenDisable:true});
+      setEnabledField(reunionTipo, false, {clearWhenDisable:true});
 
-      // Tipo reunión solo Reunión
-      setEnabledField(reunionTipo, act === "Reunión", act !== "Reunión");
+      setEnabledField(responsable, true, {clearWhenDisable:false});
+      setEnabledField(duracion, true, {clearWhenDisable:false});
+      setEnabledField(tema, true, {clearWhenDisable:false});
+      setEnabledField(objetivo, true, {clearWhenDisable:false});
+      setEnabledField(contenido, true, {clearWhenDisable:false});
+      setEnabledField(preguntas, true, {clearWhenDisable:false});
 
-      // Preguntas deshabilitadas en Socialización
+      // Socialización: charla ON, preguntas OFF
       if (act === "Socialización") {
-        preguntas.disabled = true;
-        preguntas.value = "";
-      } else {
-        preguntas.disabled = false;
+        setEnabledField(charla, true, {clearWhenDisable:false});
+        setEnabledField(preguntas, false, {clearWhenDisable:true});
+      }
+
+      // Reunión: comité ON (charla OFF)
+      if (act === "Reunión") {
+        setEnabledField(reunionTipo, true, {clearWhenDisable:false});
       }
     }
 
@@ -225,6 +244,7 @@ Si estoy fatigado, debo reportarlo."></textarea>
       msg.className = "";
 
       const act = actividad.value;
+
       if (!empresa.value.trim() || !act) {
         msg.textContent = "❌ Completa Empresa y Actividad";
         msg.className = "err";
@@ -232,13 +252,20 @@ Si estoy fatigado, debo reportarlo."></textarea>
       }
 
       if (act === "Socialización" && !charla.value) {
-        msg.textContent = "❌ Selecciona Número de charla";
+        msg.textContent = "❌ En Socialización debes seleccionar Número de charla";
         msg.className = "err";
         return;
       }
 
       if (act === "Reunión" && !reunionTipo.value) {
-        msg.textContent = "❌ Selecciona tipo de Reunión (Comité)";
+        msg.textContent = "❌ En Reunión debes seleccionar el tipo de comité";
+        msg.className = "err";
+        return;
+      }
+
+      // Validación general (puedes ajustar si quieres)
+      if (!responsable.value.trim() || !duracion.value.trim() || !objetivo.value.trim() || !contenido.value.trim()) {
+        msg.textContent = "❌ Completa Responsable, Duración, Objetivo y Contenido";
         msg.className = "err";
         return;
       }
@@ -248,9 +275,11 @@ Si estoy fatigado, debo reportarlo."></textarea>
       u.searchParams.set("actividad", act);
       u.searchParams.set("responsable", responsable.value.trim());
       u.searchParams.set("duracion", duracion.value.trim());
-      u.searchParams.set("reunion_tipo", reunionTipo.value.trim());
+      u.searchParams.set("tema", tema.value.trim());
       u.searchParams.set("objetivo", objetivo.value.trim());
-      u.searchParams.set("temas", temas.value.trim());
+      u.searchParams.set("contenido", contenido.value.trim());
+
+      if (act === "Reunión") u.searchParams.set("reunion_tipo", reunionTipo.value);
 
       if (act === "Socialización") {
         u.searchParams.set("charla_num", charla.value);
@@ -282,6 +311,11 @@ Si estoy fatigado, debo reportarlo."></textarea>
         msg.textContent = "✅ Copiado";
         msg.className = "ok";
       }
+    });
+
+    // ✅ Botón a Historial
+    document.getElementById("btn_historial").addEventListener("click", () => {
+      window.open(getHistorialUrl(), "_blank");
     });
   </script>
 </body>
