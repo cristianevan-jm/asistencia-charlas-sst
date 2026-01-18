@@ -82,6 +82,11 @@
 
       <label>Responsable</label>
       <input name="responsable" id="responsable" readonly />
+      <label>Duración (minutos)</label>
+      <input name="duracion" id="duracion" readonly />
+
+<label>Tipo de Reunión</label>
+<input name="reunion_tipo" id="reunion_tipo" readonly />
 
       <label>Objetivo</label>
       <textarea name="objetivo" id="objetivo" rows="2" readonly></textarea>
@@ -125,100 +130,160 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
+ const params = new URLSearchParams(window.location.search);
 
-    const empresaParam = params.get("empresa");
-    const charlaParam = params.get("charla_num");
-    const actividadParam = params.get("actividad") || "";
-    const responsableParam = params.get("responsable") || "";
-    const objetivoParam = params.get("objetivo") || "";
-    const temasParam = params.get("temas") || "";
-    const preguntasParam = params.get("q") || "";
+const empresaParam = params.get("empresa");
+const charlaParam = params.get("charla_num");
+const actividadParam = params.get("actividad") || "";
+const responsableParam = params.get("responsable") || "";
+const objetivoParam = params.get("objetivo") || "";
+const temasParam = params.get("temas") || "";
+const duracionParam = params.get("duracion") || "";
+const reunionTipoParam = params.get("reunion_tipo") || "";
+const preguntasParam = params.get("q") || "";
 
-    const empresaInput = document.getElementById("empresa");
-    const actividadInput = document.getElementById("actividad");
-    const responsableInput = document.getElementById("responsable");
-    const objetivoInput = document.getElementById("objetivo");
-    const temasInput = document.getElementById("temas");
+const empresaInput = document.getElementById("empresa");
+const actividadInput = document.getElementById("actividad");
+const responsableInput = document.getElementById("responsable");
+const objetivoInput = document.getElementById("objetivo");
+const temasInput = document.getElementById("temas");
+const duracionInput = document.getElementById("duracion");
+const reunionTipoInput = document.getElementById("reunion_tipo");
 
+const charlaSelect = document.getElementById("charla_select");
+const charlaHidden = document.getElementById("charla_num_hidden");
+
+// Empresa
+if (empresaParam) {
+  empresaInput.value = empresaParam;
+  empresaInput.readOnly = true;
+}
+
+// Carga campos del link
+actividadInput.value = actividadParam;
+responsableInput.value = responsableParam;
+objetivoInput.value = objetivoParam;
+temasInput.value = temasParam;
+
+duracionInput.value = duracionParam;
+reunionTipoInput.value = reunionTipoParam;
+
+// Charla: si viene charla_num, se bloquea; si no, se deja elegir
+if (charlaParam) {
+  charlaSelect.value = charlaParam;
+  charlaSelect.disabled = true;
+  charlaHidden.value = charlaParam;
+} else {
+  charlaHidden.value = charlaSelect.value;
+  charlaSelect.addEventListener("change", () => charlaHidden.value = charlaSelect.value);
+}
+
+// Si actividad = Reunión, no usar charla (ocultar selector)
+if (actividadParam === "Reunión") {
+  charlaSelect.disabled = true;
+  charlaHidden.value = ""; // no se envía charla_num
+  charlaSelect.parentElement.style.display = "none"; // oculta el bloque del select
+}
+
+// Preguntas: si Socialización, NO mostrar evaluación
+const box = document.getElementById("preguntas_box");
+box.innerHTML = ""; // limpia
+
+const preguntas = preguntasParam ? preguntasParam.split("||").map(s => s.trim()).filter(Boolean) : [];
+
+if (actividadParam !== "Socialización" && preguntas.length) {
+  const h = document.createElement("label");
+  h.textContent = "Evaluación (Verdadero / Falso)";
+  box.appendChild(h);
+
+  preguntas.forEach((q, idx) => {
+    const wrap = document.createElement("div");
+    wrap.style.marginTop = "10px";
+
+    const lab = document.createElement("label");
+    lab.textContent = (idx + 1) + ". " + q;
+    wrap.appendChild(lab);
+
+    const sel = document.createElement("select");
+    sel.name = "resp_" + (idx + 1);
+    sel.required = true;
+    sel.innerHTML = `
+      <option value="" disabled selected>Seleccione…</option>
+      <option value="Verdadero">Verdadero</option>
+      <option value="Falso">Falso</option>
+    `;
+    wrap.appendChild(sel);
+
+    const hiddenQ = document.createElement("input");
+    hiddenQ.type = "hidden";
+    hiddenQ.name = "preg_" + (idx + 1);
+    hiddenQ.value = q;
+    wrap.appendChild(hiddenQ);
+
+    box.appendChild(wrap);
+  });
+
+  const n = document.createElement("input");
+  n.type = "hidden";
+  n.name = "n_preguntas";
+  n.value = String(preguntas.length);
+  box.appendChild(n);
+}
+
+
+    <script>
+  // ...tu código previo (params, carga del link, preguntas, etc.)
+
+  const frm = document.getElementById("frm");
+  const msg = document.getElementById("msg");
+
+  function resetSelective() {
+    // 1) Limpia inputs del trabajador (texto/number/etc.) excepto los readonly o disabled
+    const inputs = frm.querySelectorAll('input:not([type="hidden"]):not([readonly]):not([disabled])');
+    inputs.forEach(i => {
+      // Evita limpiar empresa si NO es readonly (por si abres link sin empresaParam)
+      // Si quieres que sí se limpie cuando no viene en link, elimina este if.
+      if (i.name === "empresa") return;
+      i.value = "";
+    });
+
+    // 2) Limpia selects del trabajador (los de respuestas V/F)
+    const selects = frm.querySelectorAll('select:not([readonly]):not([disabled])');
+    selects.forEach(s => {
+      // No tocar el select de charla si está habilitado (si quieres mantenerlo, no lo limpies)
+      // Si prefieres que se reinicie a "Seleccione…", descomenta:
+      // if (s.id === "charla_select") { s.selectedIndex = 0; return; }
+
+      // Resetea los selects de evaluación y otros selects libres
+      s.selectedIndex = 0;
+    });
+
+    // 3) Limpia textareas del trabajador (si en algún momento agregas uno editable)
+    const textareas = frm.querySelectorAll('textarea:not([readonly]):not([disabled])');
+    textareas.forEach(t => t.value = "");
+
+    // 4) Si la charla está habilitada (no viene fija del link), asegura que hidden quede coherente
     const charlaSelect = document.getElementById("charla_select");
     const charlaHidden = document.getElementById("charla_num_hidden");
-
-    if (empresaParam) {
-      empresaInput.value = empresaParam;
-      empresaInput.readOnly = true;
+    if (charlaSelect && charlaHidden && !charlaSelect.disabled) {
+      charlaHidden.value = charlaSelect.value || "";
     }
+  }
 
-    actividadInput.value = actividadParam;
-    responsableInput.value = responsableParam;
-    objetivoInput.value = objetivoParam;
-    temasInput.value = temasParam;
+  frm.addEventListener("submit", () => {
+    msg.textContent = "Enviando…";
+    msg.className = "";
 
-    if (charlaParam) {
-      charlaSelect.value = charlaParam;
-      charlaSelect.disabled = true; // disabled no se envía
-      charlaHidden.value = charlaParam;
-    } else {
-      charlaHidden.value = charlaSelect.value;
-      charlaSelect.addEventListener("change", () => charlaHidden.value = charlaSelect.value);
-    }
+    setTimeout(() => {
+      msg.textContent = "✅ Registro guardado";
+      msg.className = "ok";
+      resetSelective(); // ✅ en vez de frm.reset()
+    }, 900);
+  });
+</script>
 
-    const box = document.getElementById("preguntas_box");
-    const preguntas = preguntasParam ? preguntasParam.split("||").map(s => s.trim()).filter(Boolean) : [];
-
-    if (preguntas.length) {
-      const h = document.createElement("label");
-      h.textContent = "Evaluación (Verdadero / Falso)";
-      box.appendChild(h);
-
-      preguntas.forEach((q, idx) => {
-        const wrap = document.createElement("div");
-        wrap.style.marginTop = "10px";
-
-        const lab = document.createElement("label");
-        lab.textContent = (idx + 1) + ". " + q;
-        wrap.appendChild(lab);
-
-        const sel = document.createElement("select");
-        sel.name = "resp_" + (idx + 1);
-        sel.required = true;
-        sel.innerHTML = `
-          <option value="" disabled selected>Seleccione…</option>
-          <option value="Verdadero">Verdadero</option>
-          <option value="Falso">Falso</option>
-        `;
-        wrap.appendChild(sel);
-
-        const hiddenQ = document.createElement("input");
-        hiddenQ.type = "hidden";
-        hiddenQ.name = "preg_" + (idx + 1);
-        hiddenQ.value = q;
-        wrap.appendChild(hiddenQ);
-
-        box.appendChild(wrap);
-      });
-
-      const n = document.createElement("input");
-      n.type = "hidden";
-      n.name = "n_preguntas";
-      n.value = String(preguntas.length);
-      box.appendChild(n);
-    }
-
-    const frm = document.getElementById("frm");
-    const msg = document.getElementById("msg");
-
-    frm.addEventListener("submit", () => {
-      msg.textContent = "Enviando…";
-      msg.className = "";
-      setTimeout(() => {
-        msg.textContent = "✅ Registro guardado";
-        msg.className = "ok";
-        frm.reset();
-      }, 900);
-    });
-  </script>
 </body>
 </html>
+
 
 
