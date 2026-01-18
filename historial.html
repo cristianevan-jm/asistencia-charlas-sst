@@ -20,6 +20,7 @@
     .modal{background:#fff;border-radius:14px;max-width:760px;width:100%;padding:16px}
     .modal h3{margin:0 0 10px}
     .close{float:right}
+    input{padding:10px;border:1px solid #ccc;border-radius:10px}
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -33,7 +34,7 @@
 
   <div class="card">
     <div class="row">
-      <input id="filter" placeholder="Filtrar por tema o fecha (YYYY-MM-DD)" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:10px">
+      <input id="filter" placeholder="Filtrar por tema o fecha (YYYY-MM-DD)" style="flex:1">
       <button id="btn_reload">Recargar</button>
     </div>
 
@@ -78,7 +79,7 @@
 
 <script>
   // ✅ Pega aquí tu WebApp URL (/exec)
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5XYwYVXSNiHtV_oDtyO9Twi4RYLLlKNYU-UpmY0uRkgH4XRaTd4uUhnTshLBDwxA9ng/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCS8005EXhddTGrFdl_usQcKDcH44oomspPMIbIY--suMyVRbsdyq1ZJzlAxLpMDPJKw/exec";
 
   function jsonp(url) {
     return new Promise((resolve, reject) => {
@@ -106,7 +107,7 @@
 
   let historyItems = [];
   let currentAttendees = [];
-  let currentMeta = null; // {date, tema, sheet}
+  let currentMeta = null; // {date, tema}
 
   async function loadHistory() {
     tbody.innerHTML = `<tr><td colspan="4" class="muted">Cargando…</td></tr>`;
@@ -123,8 +124,7 @@
     const q = (filter.value || "").trim().toLowerCase();
     const items = !q ? historyItems : historyItems.filter(it =>
       (it.date || "").toLowerCase().includes(q) ||
-      (it.tema || "").toLowerCase().includes(q) ||
-      (it.sheet || "").toLowerCase().includes(q)
+      (it.tema || "").toLowerCase().includes(q)
     );
 
     if (!items.length) {
@@ -137,7 +137,9 @@
         <td>${it.date}</td>
         <td>${escapeHtml(it.tema)}</td>
         <td>${it.asistentes}</td>
-        <td><button data-sheet="${escapeAttr(it.sheet)}" data-date="${it.date}" data-tema="${escapeAttr(it.tema)}">Lista de asistentes</button></td>
+        <td>
+          <button data-date="${it.date}" data-tema="${escapeAttr(it.tema)}">Lista de asistentes</button>
+        </td>
       </tr>
     `).join("");
   }
@@ -157,10 +159,9 @@
   backdrop.addEventListener("click", (e)=>{ if(e.target===backdrop) closeModal(); });
 
   document.getElementById("tbl").addEventListener("click", async (e) => {
-    const btn = e.target.closest("button[data-sheet]");
+    const btn = e.target.closest("button[data-date]");
     if (!btn) return;
 
-    const sheet = btn.getAttribute("data-sheet");
     const date = btn.getAttribute("data-date");
     const tema = btn.getAttribute("data-tema");
 
@@ -169,14 +170,14 @@
     modalBody.innerHTML = "";
     openModal();
 
-    const data = await jsonp(`${APPS_SCRIPT_URL}?action=attendees&sheet=${encodeURIComponent(sheet)}&date=${encodeURIComponent(date)}&tema=${encodeURIComponent(tema)}`);
+    const data = await jsonp(`${APPS_SCRIPT_URL}?action=attendees_global&date=${encodeURIComponent(date)}&tema=${encodeURIComponent(tema)}`);
     if (!data.ok) {
       modalCount.textContent = "Error al cargar asistentes";
       return;
     }
 
     currentAttendees = data.items || [];
-    currentMeta = { sheet, date, tema };
+    currentMeta = { date, tema };
 
     modalCount.textContent = `${currentAttendees.length} asistentes`;
     modalBody.innerHTML = currentAttendees.map(a => `
