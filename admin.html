@@ -25,12 +25,24 @@
   <div class="card">
 
     <!-- Row 1 -->
-    <div class="row">
-      <div>
-        <label>Empresa</label>
-        <input id="empresa_admin" placeholder="Ej: COOTRAESCAL" required />
-      </div>
+<div class="row">
+  <div>
+    <label>Empresa</label>
+    <input id="empresa_admin" placeholder="Ej: COOTRAESCAL" required />
+  </div>
 
+  <div>
+    <label>Actividad</label>
+    <select id="actividad_admin" required>
+      <option value="" disabled selected>Seleccione…</option>
+      <option value="Socialización">Socialización</option>
+      <option value="Capacitación">Capacitación</option>
+      <option value="Reunión">Reunión</option>
+      <option value="Taller">Taller</option>
+    </select>
+  </div>
+</div>
+<!-- Row 2 -->
       <div>
         <label>Número de charla</label>
         <!-- Inicia desactivado -->
@@ -317,3 +329,4 @@ Si estoy fatigado, debo reportarlo."></textarea>
   </script>
 </body>
 </html>
+
