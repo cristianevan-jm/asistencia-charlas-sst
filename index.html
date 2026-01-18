@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Asistencia Charlas SST</title>
+  <title>Asistencia</title>
 
   <style>
     *{ box-sizing:border-box; }
@@ -11,38 +11,19 @@
     h1{margin:0 0 10px}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
     label{display:block;margin:10px 0 6px;font-weight:600}
-
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row > div{min-width:0}
-
-    input,select,textarea{
-      width:100%;
-      padding:10px;
-      border:1px solid #ccc;
-      border-radius:10px
-    }
-
+    .row>div{min-width:0}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
     textarea{resize:vertical}
-
     button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
     .ok{color:#0a7a0a;font-weight:700}
-    .err{color:#b00020;font-weight:700}
     small{color:#666}
-
-    @media (max-width:680px){
-      .row{grid-template-columns:1fr}
-    }
+    @media (max-width:680px){ .row{grid-template-columns:1fr} }
   </style>
 </head>
 
 <body>
-  <h1 style="text-align:center">*** Asistencia Charlas SST ***</h1>
-
-  <div style="text-align:center;margin-bottom:10px">
-    <img src="logo.jpeg" alt="Logo empresa" style="max-height:90px">
-  </div>
-
-  <p style="text-align:center"><small>Registro único de asistencia y comprensión.</small></p>
+  <h1 style="text-align:center">*** Asistencia ***</h1>
 
   <div class="card">
     <iframe name="hidden_iframe" style="display:none;"></iframe>
@@ -52,7 +33,6 @@
       method="POST"
       target="hidden_iframe">
 
-      <!-- DATOS DEL COLABORADOR -->
       <div class="row">
         <div>
           <label>Nombre</label>
@@ -97,7 +77,6 @@
         </div>
       </div>
 
-      <!-- DATOS DE LA ACTIVIDAD (DESDE LINK) -->
       <label>Actividad</label>
       <input name="actividad" id="actividad" readonly>
 
@@ -116,16 +95,13 @@
       <label>Temas</label>
       <textarea name="temas" id="temas" rows="3" readonly></textarea>
 
-      <!-- CHARLA SOLO PARA SOCIALIZACIÓN -->
-      <div id="charla_box">
+      <!-- Charla: solo Socialización -->
+      <div id="charla_box" style="display:none">
         <label>Charla (N°)</label>
         <input type="hidden" name="charla_num" id="charla_num">
-        <select id="charla_select" disabled>
-          <option value="" disabled selected>—</option>
-        </select>
+        <select id="charla_select" disabled></select>
       </div>
 
-      <!-- PREGUNTAS -->
       <div id="preguntas_box"></div>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
@@ -138,75 +114,108 @@
 <script>
   const params = new URLSearchParams(window.location.search);
 
-  const actividad = params.get("actividad") || "";
+  // Carga parámetros
+  const actividadParam = params.get("actividad") || "";
+  const charlaNumParam = params.get("charla_num") || "";
+  const charlaTextoParam = params.get("charla_texto") || "";
   const preguntasParam = params.get("q") || "";
 
-  // Campos fijos
-  ["empresa","actividad","responsable","duracion","reunion_tipo","objetivo","temas"]
-    .forEach(id=>{
-      const el=document.getElementById(id);
-      if(el && params.get(id)) el.value=params.get(id);
-    });
+  // Set campos desde el link
+  ["empresa","actividad","responsable","duracion","reunion_tipo","objetivo","temas"].forEach(id=>{
+    const el = document.getElementById(id);
+    const val = params.get(id);
+    if (el && val !== null) el.value = val;
+  });
 
-  // Charla
+  // Empresa: si viene por link, bloquear edición
+  const empresaInput = document.getElementById("empresa");
+  if (params.get("empresa")) empresaInput.readOnly = true;
+
+  // Charla solo Socialización
   const charlaBox = document.getElementById("charla_box");
   const charlaHidden = document.getElementById("charla_num");
-  const charlaParam = params.get("charla_num");
+  const charlaSelect = document.getElementById("charla_select");
 
-  if (actividad === "Socialización" && charlaParam) {
-    charlaHidden.value = charlaParam;
+  if (actividadParam === "Socialización" && charlaNumParam) {
     charlaBox.style.display = "block";
-    document.getElementById("charla_select").innerHTML =
-      `<option selected>Charla ${charlaParam}</option>`;
+    charlaHidden.value = charlaNumParam;
+
+    const texto = charlaTextoParam || `Charla ${String(charlaNumParam).padStart(2,"0")}`;
+    charlaSelect.innerHTML = `<option selected>${texto}</option>`;
   } else {
     charlaBox.style.display = "none";
+    charlaHidden.value = "";
   }
 
-  // Preguntas
+  // Preguntas: NO en Socialización
   const box = document.getElementById("preguntas_box");
-  const preguntas = preguntasParam ? preguntasParam.split("||").filter(Boolean) : [];
+  const preguntas = preguntasParam ? preguntasParam.split("||").map(s=>s.trim()).filter(Boolean) : [];
 
-  if (actividad !== "Socialización" && preguntas.length) {
-    const h=document.createElement("label");
-    h.textContent="Evaluación (Verdadero / Falso)";
+  if (actividadParam !== "Socialización" && preguntas.length) {
+    const h = document.createElement("label");
+    h.textContent = "Evaluación (Verdadero / Falso)";
     box.appendChild(h);
 
-    preguntas.forEach((q,i)=>{
-      box.insertAdjacentHTML("beforeend",`
-        <label>${i+1}. ${q}</label>
-        <select name="resp_${i+1}" required>
-          <option value="" disabled selected>Seleccione…</option>
-          <option value="Verdadero">Verdadero</option>
-          <option value="Falso">Falso</option>
-        </select>
-        <input type="hidden" name="preg_${i+1}" value="${q}">
-      `);
+    preguntas.forEach((q, idx) => {
+      const wrap = document.createElement("div");
+      wrap.style.marginTop = "10px";
+
+      const lab = document.createElement("label");
+      lab.textContent = (idx + 1) + ". " + q;
+      wrap.appendChild(lab);
+
+      const sel = document.createElement("select");
+      sel.name = "resp_" + (idx + 1);
+      sel.required = true;
+      sel.innerHTML = `
+        <option value="" disabled selected>Seleccione…</option>
+        <option value="Verdadero">Verdadero</option>
+        <option value="Falso">Falso</option>
+      `;
+      wrap.appendChild(sel);
+
+      const hiddenQ = document.createElement("input");
+      hiddenQ.type = "hidden";
+      hiddenQ.name = "preg_" + (idx + 1);
+      hiddenQ.value = q;
+      wrap.appendChild(hiddenQ);
+
+      box.appendChild(wrap);
     });
 
-    box.insertAdjacentHTML("beforeend",
-      `<input type="hidden" name="n_preguntas" value="${preguntas.length}">`);
+    const n = document.createElement("input");
+    n.type = "hidden";
+    n.name = "n_preguntas";
+    n.value = String(preguntas.length);
+    box.appendChild(n);
   }
 
-  // RESET SELECTIVO
-  const frm=document.getElementById("frm");
-  const msg=document.getElementById("msg");
+  // Reset Selectivo
+  const frm = document.getElementById("frm");
+  const msg = document.getElementById("msg");
 
-  function resetSelective(){
-    frm.querySelectorAll('input:not([readonly]):not([type=hidden])').forEach(i=>i.value="");
-    frm.querySelectorAll('select:not([readonly])').forEach(s=>s.selectedIndex=0);
+  function resetSelective() {
+    frm.querySelectorAll('input:not([type="hidden"]):not([readonly]):not([disabled])')
+      .forEach(i => i.value = "");
+
+    frm.querySelectorAll('select:not([disabled])')
+      .forEach(s => s.selectedIndex = 0);
+
+    frm.querySelectorAll('textarea:not([readonly]):not([disabled])')
+      .forEach(t => t.value = "");
   }
 
-  frm.addEventListener("submit",()=>{
-    msg.textContent="Enviando…";
-    setTimeout(()=>{
-      msg.textContent="✅ Registro guardado";
-      msg.className="ok";
+  frm.addEventListener("submit", () => {
+    msg.textContent = "Enviando…";
+    msg.className = "";
+
+    setTimeout(() => {
+      msg.textContent = "✅ Registro guardado";
+      msg.className = "ok";
       resetSelective();
-    },900);
+    }, 900);
   });
 </script>
 
 </body>
 </html>
-
-
