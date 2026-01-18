@@ -29,7 +29,7 @@
     <iframe name="hidden_iframe" style="display:none;"></iframe>
 
     <form id="frm"
-      action="https://script.google.com/macros/s/AKfycbyre9nlgP0gFJM4gu0O_gi4GvocP4-YmWO5lVru64f_2sczflleFdqhwc5TG9IBXqpJxA/exec"
+      action="https://script.google.com/macros/s/AKfycbxJn6ZCczRPeMRmzOhI-IGKsEknt2ZUrkLmNWCrqDqxvt8QrOZnLA7-R3IJ6u6ODjS7Uw/exec"
       method="POST"
       target="hidden_iframe">
 
@@ -97,11 +97,11 @@
 
       <!-- Charla: solo Socialización -->
       <div id="charla_box" style="display:none">
-        <label>Charla (N°)</label>
-        <input type="hidden" name="charla_num" id="charla_num">
-        <select id="charla_select" disabled></select>
-      </div>
-
+  <label>Charla (N°)</label>
+  <input type="hidden" name="charla_num" id="charla_num">
+  <input type="hidden" name="charla_texto" id="charla_texto">
+  <select id="charla_select" disabled></select>
+</div>
       <div id="preguntas_box"></div>
 
       <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
@@ -136,16 +136,21 @@
   const charlaHidden = document.getElementById("charla_num");
   const charlaSelect = document.getElementById("charla_select");
 
-  if (actividadParam === "Socialización" && charlaNumParam) {
-    charlaBox.style.display = "block";
-    charlaHidden.value = charlaNumParam;
+  const charlaTextoHidden = document.getElementById("charla_texto");
 
-    const texto = charlaTextoParam || `Charla ${String(charlaNumParam).padStart(2,"0")}`;
-    charlaSelect.innerHTML = `<option selected>${texto}</option>`;
-  } else {
-    charlaBox.style.display = "none";
-    charlaHidden.value = "";
-  }
+if (actividadParam === "Socialización" && charlaNumParam) {
+  charlaBox.style.display = "block";
+  charlaHidden.value = charlaNumParam;
+
+  const texto = charlaTextoParam || `Charla ${String(charlaNumParam).padStart(2,"0")}`;
+  charlaTextoHidden.value = texto; // ✅ esto viaja al Sheet
+  charlaSelect.innerHTML = `<option selected>${texto}</option>`;
+} else {
+  charlaBox.style.display = "none";
+  charlaHidden.value = "";
+  charlaTextoHidden.value = "";
+}
+
 
   // Preguntas: NO en Socialización
   const box = document.getElementById("preguntas_box");
@@ -219,3 +224,4 @@
 
 </body>
 </html>
+
