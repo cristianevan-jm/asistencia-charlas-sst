@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Historial</title>
+
+  <style>
+    *{ box-sizing:border-box; }
+    body{font-family:system-ui,Arial;max-width:980px;margin:24px auto;padding:0 14px}
+    h1{margin:0 0 14px}
+    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:12px 0}
+    table{width:100%;border-collapse:collapse}
+    th,td{border-bottom:1px solid #eee;padding:10px;text-align:left;vertical-align:top}
+    th{background:#fafafa}
+    button{padding:8px 12px;border:0;border-radius:10px;cursor:pointer}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{color:#666}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:14px}
+    .modal{background:#fff;border-radius:14px;max-width:760px;width:100%;padding:16px}
+    .modal h3{margin:0 0 10px}
+    .close{float:right}
+  </style>
+
+  <!-- Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.31/dist/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+  <h1>Historial</h1>
+  <p class="muted">Fecha • Tema • Nº asistentes • Lista de asistentes (Excel / PDF)</p>
+
+  <div class="card">
+    <div class="row">
+      <input id="filter" placeholder="Filtrar por tema o fecha (YYYY-MM-DD)" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:10px">
+      <button id="btn_reload">Recargar</button>
+    </div>
+
+    <div style="margin-top:12px;overflow:auto">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tema</th>
+            <th>Nº asistentes</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="4" class="muted">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="backdrop">
+    <div class="modal">
+      <button class="close" id="btn_close">Cerrar</button>
+      <h3 id="modal_title">Asistentes</h3>
+      <div class="row" style="margin:10px 0">
+        <button id="btn_excel">Descargar Excel</button>
+        <button id="btn_pdf">Descargar PDF</button>
+        <span class="muted" id="modal_count"></span>
+      </div>
+      <div style="overflow:auto;max-height:55vh">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Nombre</th><th>Apellido</th><th>Cédula</th><th>Cargo</th><th>Empresa</th><th>Actividad</th>
+            </tr>
+          </thead>
+          <tbody id="modal_body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ✅ Pega aquí tu WebApp URL (termina en /exec)
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKFY.../exec";
+
+  // ---------- JSONP ----------
+  function jsonp(url, cbName = "cb") {
+    return new Promise((resolve, reject) => {
+      const callback = "jsonp_" + Math.random().toString(36).slice(2);
+      window[callback] = (data) => {
+        delete window[callback];
+        script.remove();
+        resolve(data);
+      };
+      const sep = url.includes("?") ? "&" : "?";
+      const script = document.createElement("script");
+      script.src = `${url}${sep}callback=${callback}`;
+      script.onerror = () => {
+        delete window[callback];
+        script.remove();
+        reject(new Error("JSONP error"));
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  // ---------- UI ----------
+  const tbody = document.getElementById("tbody");
+  const filter = document.getElementById("filter");
+
+  let historyItems = [];
+  let currentAttendees = [];
+  let currentMeta = null; // {date, tema, sheet}
+
+  async function loadHistory() {
+    tbody.innerHTML = `<tr><td colspan="4" class="muted">Cargando…</td></tr>`;
+    const data = await jsonp(`${APPS_SCRIPT_URL}?action=history`);
+    if (!data.ok) {
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${data.error || "No se pudo cargar"}</td></tr>`;
+      return;
+    }
+    historyItems = data.items || [];
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const q = (filter.value || "").trim().toLowerCase();
+    const items = !q ? historyItems : historyItems.filter(it =>
+      (it.date || "").toLowerCase().includes(q) ||
+      (it.tema || "").toLowerCase().includes(q) ||
+      (it.sheet || "").toLowerCase().includes(q)
+    );
+
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Sin resultados</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map(it => `
+      <tr>
+        <td>${it.date}</td>
+        <td>${escapeHtml(it.tema)}</td>
+        <td>${it.asistentes}</td>
+        <td><button data-sheet="${escapeAttr(it.sheet)}" data-date="${it.date}" data-tema="${escapeAttr(it.tema)}">Lista de asistentes</button></td>
+      </tr>
+    `).join("");
+  }
+
+  function escapeHtml(s){ return String(s||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
+  function escapeAttr(s){ return String(s||"").replace(/"/g,"&quot;"); }
+
+  // Modal
+  const backdrop = document.getElementById("backdrop");
+  const modalTitle = document.getElementById("modal_title");
+  const modalBody = document.getElementById("modal_body");
+  const modalCount = document.getElementById("modal_count");
+
+  function openModal() { backdrop.style.display = "flex"; }
+  function closeModal() { backdrop.style.display = "none"; }
+
+  document.getElementById("btn_close").addEventListener("click", closeModal);
+  backdrop.addEventListener("click", (e)=>{ if(e.target===backdrop) closeModal(); });
+
+  // Click tabla
+  document.getElementById("tbl").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-sheet]");
+    if (!btn) return;
+
+    const sheet = btn.getAttribute("data-sheet");
+    const date = btn.getAttribute("data-date");
+    const tema = btn.getAttribute("data-tema");
+
+    modalTitle.textContent = `Asistentes • ${date}`;
+    modalCount.textContent = "Cargando…";
+    modalBody.innerHTML = "";
+    openModal();
+
+    const data = await jsonp(`${APPS_SCRIPT_URL}?action=attendees&sheet=${encodeURIComponent(sheet)}&date=${encodeURIComponent(date)}&tema=${encodeURIComponent(tema)}`);
+    if (!data.ok) {
+      modalCount.textContent = "Error al cargar asistentes";
+      return;
+    }
+
+    currentAttendees = data.items || [];
+    currentMeta = { sheet, date, tema };
+
+    modalCount.textContent = `${currentAttendees.length} asistentes`;
+    modalBody.innerHTML = currentAttendees.map(a => `
+      <tr>
+        <td>${a.fecha}</td>
+        <td>${escapeHtml(a.nombre)}</td>
+        <td>${escapeHtml(a.apellido)}</td>
+        <td>${escapeHtml(a.cedula)}</td>
+        <td>${escapeHtml(a.cargo)}</td>
+        <td>${escapeHtml(a.empresa)}</td>
+        <td>${escapeHtml(a.actividad)}</td>
+      </tr>
+    `).join("");
+  });
+
+  // Excel
+  document.getElementById("btn_excel").addEventListener("click", () => {
+    if (!currentMeta) return;
+
+    const rows = currentAttendees.map(a => ({
+      Fecha: a.fecha,
+      Nombre: a.nombre,
+      Apellido: a.apellido,
+      Cédula: a.cedula,
+      Cargo: a.cargo,
+      Empresa: a.empresa,
+      Actividad: a.actividad
+    }));
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Asistentes");
+
+    const fname = `Asistentes_${currentMeta.date}_${sanitizeFile(currentMeta.tema)}.xlsx`;
+    XLSX.writeFile(wb, fname);
+  });
+
+  // PDF
+  document.getElementById("btn_pdf").addEventListener("click", () => {
+    if (!currentMeta) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(12);
+    doc.text(`Lista de asistentes`, 14, 14);
+    doc.setFontSize(10);
+    doc.text(`Fecha: ${currentMeta.date}`, 14, 20);
+    doc.text(`Tema: ${currentMeta.tema}`, 14, 26);
+
+    const body = currentAttendees.map(a => [
+      a.fecha, a.nombre, a.apellido, a.cedula, a.cargo, a.empresa, a.actividad
+    ]);
+
+    doc.autoTable({
+      head: [["Fecha","Nombre","Apellido","Cédula","Cargo","Empresa","Actividad"]],
+      body,
+      startY: 32,
+      styles: { fontSize: 8 }
+    });
+
+    const fname = `Asistentes_${currentMeta.date}_${sanitizeFile(currentMeta.tema)}.pdf`;
+    doc.save(fname);
+  });
+
+  function sanitizeFile(s){
+    return String(s||"").replace(/[\\\/\?\*\[\]:"]/g," ").replace(/\s+/g," ").trim().slice(0,60);
+  }
+
+  // Events
+  document.getElementById("btn_reload").addEventListener("click", loadHistory);
+  filter.addEventListener("input", renderHistory);
+
+  // Init
+  loadHistory();
+</script>
+</body>
+</html>
