@@ -42,13 +42,13 @@
     </select>
   </div>
 </div>
-<!-- Row 2 -->
-      <div>
-        <label>Número de charla</label>
-        <!-- Inicia desactivado -->
-        <select id="charla_admin" disabled>
-          <option value="" disabled selected>Seleccione…</option>
-          <option value="1">Charla 01 – La seguridad comienza conmigo</option>
+    <!-- Row 2 -->
+<div class="row">
+  <div>
+    <label>Número de charla</label>
+    <select id="charla_admin" disabled>
+      <option value="" disabled selected>Seleccione…</option>
+      <option value="1">Charla 01 – La seguridad comienza conmigo</option>
           <option value="2">Charla 02 – Identificación de peligros en la operación de transporte</option>
           <option value="3">Charla 03 – Uso correcto de los elementos de protección personal (EPP)</option>
           <option value="4">Charla 04 – Fatiga y somnolencia en la conducción</option>
@@ -109,9 +109,15 @@
           <option value="59">Charla 59 – La seguridad y la calidad salvan vidas (Refuerzo 2)</option>
           <option value="60">Charla 60 – La seguridad y la calidad salvan vidas (Refuerzo 3)</option>
         </select>
-        <small>Solo se habilita si Actividad = Socialización</small>
-      </div>
-    </div>
+    </select>
+    <small>Solo se habilita si Actividad = Socialización</small>
+  </div>
+
+  <div>
+    <label>Responsable</label>
+    <input id="responsable_admin" placeholder="Nombre del responsable" />
+  </div>
+</div>
 
     <!-- Row 2 -->
     <div class="row">
@@ -329,4 +335,5 @@ Si estoy fatigado, debo reportarlo."></textarea>
   </script>
 </body>
 </html>
+
 
