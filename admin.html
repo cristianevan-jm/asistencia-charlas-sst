@@ -110,6 +110,23 @@
         <label>Responsable</label>
         <input id="responsable_admin" placeholder="Nombre del responsable" required />
       </div>
+      <div class="row">
+  <div>
+    <label>Duración (minutos)</label>
+    <input id="duracion_admin" type="number" min="1" placeholder="Ej: 5" />
+  </div>
+  <div>
+    <label>Tipo de Reunión (si aplica)</label>
+    <select id="reunion_tipo_admin">
+      <option value="" selected>—</option>
+      <option value="COPASST">COPASST</option>
+      <option value="COMITE_DE_CONVIVENCIA">COMITÉ DE CONVIVENCIA</option>
+      <option value="COMITE_DE_SEGURIDAD_VIAL">COMITÉ DE SEGURIDAD VIAL</option>
+    </select>
+    <small>Solo se habilita cuando Actividad = Reunión</small>
+  </div>
+</div>
+
     </div>
 
     <label>Objetivo</label>
@@ -137,76 +154,207 @@ Si estoy fatigado, debo reportarlo."></textarea>
     </div>
   </div>
 
-  <script>
-    const empresa = document.getElementById("empresa_admin");
-    const charla = document.getElementById("charla_admin");
-    const actividad = document.getElementById("actividad_admin");
-    const responsable = document.getElementById("responsable_admin");
-    const objetivo = document.getElementById("objetivo_admin");
-    const temas = document.getElementById("temas_admin");
-    const preguntas = document.getElementById("preguntas_admin");
-    const link = document.getElementById("link");
-    const msg = document.getElementById("msg");
+ <script>
+  const empresa = document.getElementById("empresa_admin");
+  const charla = document.getElementById("charla_admin");
+  const actividad = document.getElementById("actividad_admin");
+  const responsable = document.getElementById("responsable_admin");
+  const duracion = document.getElementById("duracion_admin");
+  const reunionTipo = document.getElementById("reunion_tipo_admin");
 
-    function getBaseIndexUrl() {
-      const url = new URL(window.location.href);
-      url.pathname = url.pathname.replace(/admin\.html$/i, "index.html");
-      url.search = "";
-      url.hash = "";
-      return url.toString();
+  const objetivo = document.getElementById("objetivo_admin");
+  const temas = document.getElementById("temas_admin");
+  const preguntas = document.getElementById("preguntas_admin");
+
+  const link = document.getElementById("link");
+  const msg = document.getElementById("msg");
+
+  function getBaseIndexUrl() {
+    const url = new URL(window.location.href);
+    url.pathname = url.pathname.replace(/admin\.html$/i, "index.html");
+    url.search = "";
+    url.hash = "";
+    return url.toString();
+  }
+
+  function normalizeLines(text, limit) {
+    return text.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, limit);
+  }
+
+  function setEnabled(el, enabled) {
+    el.disabled = !enabled;
+    el.readOnly = !enabled;
+    if (!enabled) el.value = "";
+  }
+
+  function setActividadRules() {
+    const act = actividad.value;
+
+    // Siempre habilitados (base)
+    setEnabled(empresa, true);
+    setEnabled(responsable, true); // en tu requerimiento: responsable se habilita en reunion/cap/taller
+    setEnabled(objetivo, true);
+    setEnabled(temas, true);
+    setEnabled(duracion, true);
+    setEnabled(preguntas, true);
+
+    // Defaults
+    reunionTipo.disabled = true;
+    reunionTipo.value = "";
+
+    // 1) SOCIALIZACIÓN:
+    // - se carga lista de charlas (ya la tienes)
+    // - NO se habilita preguntas
+    // - (puedes decidir si objetivo/temas/responsable van o no: tú no pediste habilitarlos aquí)
+    if (act === "Socialización") {
+      // Lista charlas: charla_admin habilitada
+      charla.disabled = false;
+
+      // Bloquear preguntas
+      setEnabled(preguntas, false);
+
+      // Para socialización normalmente sí hay responsable/objetivo/temas,
+      // pero si quieres “solo charla”, descomenta esto:
+      // setEnabled(objetivo, false);
+      // setEnabled(temas, false);
+      // setEnabled(responsable, false);
+      // setEnabled(duracion, false);
     }
 
-    function normalizeLines(text, limit) {
-      return text.split(/\r?\n/).map(s => s.trim()).filter(Boolean).slice(0, limit);
+    // 2) REUNIÓN:
+    // - el selector principal (charla_admin) no debe ser “charla”
+    // - debe ser COPASST / Convivencia / Seguridad Vial
+    // - habilitar Tema, Objetivo, Responsable, Duración, Preguntas
+    if (act === "Reunión") {
+      // No usar charlas aquí: deshabilito el select de charlas
+      charla.value = "";
+      charla.disabled = true;
+
+      // Habilitar tipo reunión
+      reunionTipo.disabled = false;
+
+      // Habilitar campos
+      setEnabled(temas, true);
+      setEnabled(objetivo, true);
+      setEnabled(responsable, true);
+      setEnabled(duracion, true);
+      setEnabled(preguntas, true);
     }
 
-    document.getElementById("btn_generar").addEventListener("click", (e) => {
-      e.preventDefault();
-      msg.textContent = "";
-      msg.className = "";
+    // 3) CAPACITACIÓN / TALLER:
+    // - se usa lista de charlas
+    // - habilitar Tema, Objetivo, Responsable, Duración, Preguntas
+    if (act === "Capacitación" || act === "Taller") {
+      charla.disabled = false;
+      setEnabled(temas, true);
+      setEnabled(objetivo, true);
+      setEnabled(responsable, true);
+      setEnabled(duracion, true);
+      setEnabled(preguntas, true);
+    }
+  }
 
-      if (!empresa.value.trim() || !charla.value || !actividad.value ||
-          !responsable.value.trim() || !objetivo.value.trim() || !temas.value.trim()) {
-        msg.textContent = "❌ Completa todos los campos obligatorios";
+  actividad.addEventListener("change", setActividadRules);
+  setActividadRules();
+
+  document.getElementById("btn_generar").addEventListener("click", (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+    msg.className = "";
+
+    const act = actividad.value;
+
+    // Validaciones según actividad
+    if (!empresa.value.trim() || !act) {
+      msg.textContent = "❌ Completa Empresa y Actividad";
+      msg.className = "err";
+      return;
+    }
+
+    // Reunión exige tipo de reunión
+    if (act === "Reunión" && !reunionTipo.value) {
+      msg.textContent = "❌ Selecciona el tipo de Reunión (COPASST / Convivencia / Seguridad Vial)";
+      msg.className = "err";
+      return;
+    }
+
+    // Capacitación/Taller/Socialización exigen charla
+    if ((act === "Capacitación" || act === "Taller" || act === "Socialización") && !charla.value) {
+      msg.textContent = "❌ Selecciona el Número de charla";
+      msg.className = "err";
+      return;
+    }
+
+    // Para Reunión/Cap/Taller pediste habilitar y exigir estos campos:
+    if (act === "Reunión" || act === "Capacitación" || act === "Taller") {
+      if (!responsable.value.trim() || !duracion.value.trim() || !objetivo.value.trim() || !temas.value.trim()) {
+        msg.textContent = "❌ Completa Responsable, Duración, Objetivo y Temas";
         msg.className = "err";
         return;
       }
+    }
 
-      const qs = normalizeLines(preguntas.value, 15);
-      const u = new URL(getBaseIndexUrl());
+    // Para Socialización: objetivo/temas/responsable pueden ser opcionales o requeridos (tú defines)
+    // Aquí los dejo requeridos como estaba tu lógica original:
+    if (act === "Socialización") {
+      if (!responsable.value.trim() || !objetivo.value.trim() || !temas.value.trim()) {
+        msg.textContent = "❌ Completa Responsable, Objetivo y Temas (Socialización)";
+        msg.className = "err";
+        return;
+      }
+    }
 
-      u.searchParams.set("empresa", empresa.value.trim());
+    const qs = normalizeLines(preguntas.value, 15);
+    const u = new URL(getBaseIndexUrl());
+
+    u.searchParams.set("empresa", empresa.value.trim());
+    u.searchParams.set("actividad", act);
+    u.searchParams.set("responsable", responsable.value.trim());
+    u.searchParams.set("objetivo", objetivo.value.trim());
+    u.searchParams.set("temas", temas.value.trim());
+
+    if (duracion.value.trim()) u.searchParams.set("duracion", duracion.value.trim());
+
+    if (act === "Reunión") {
+      u.searchParams.set("reunion_tipo", reunionTipo.value);
+      // no hay charla_num
+    } else {
       u.searchParams.set("charla_num", charla.value);
-      u.searchParams.set("actividad", actividad.value);
-      u.searchParams.set("responsable", responsable.value.trim());
-      u.searchParams.set("objetivo", objetivo.value.trim());
-      u.searchParams.set("temas", temas.value.trim());
-      if (qs.length) u.searchParams.set("q", qs.join("||"));
+    }
 
-      link.value = u.toString();
-      msg.textContent = "✅ Link generado";
+    // Preguntas:
+    // - Socialización: NO debe ir preguntas
+    // - Reunión/Cap/Taller: sí
+    if (act !== "Socialización" && qs.length) {
+      u.searchParams.set("q", qs.join("||"));
+    }
+
+    link.value = u.toString();
+    msg.textContent = "✅ Link generado";
+    msg.className = "ok";
+  });
+
+  document.getElementById("btn_copiar").addEventListener("click", async () => {
+    if (!link.value) {
+      msg.textContent = "❌ Primero genera el link";
+      msg.className = "err";
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(link.value);
+      msg.textContent = "✅ Copiado";
       msg.className = "ok";
-    });
+    } catch {
+      link.select();
+      document.execCommand("copy");
+      msg.textContent = "✅ Copiado";
+      msg.className = "ok";
+    }
+  });
+</script>
 
-    document.getElementById("btn_copiar").addEventListener("click", async () => {
-      if (!link.value) {
-        msg.textContent = "❌ Primero genera el link";
-        msg.className = "err";
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(link.value);
-        msg.textContent = "✅ Copiado";
-        msg.className = "ok";
-      } catch {
-        link.select();
-        document.execCommand("copy");
-        msg.textContent = "✅ Copiado";
-        msg.className = "ok";
-      }
-    });
-  </script>
 </body>
 </html>
+
 
 
